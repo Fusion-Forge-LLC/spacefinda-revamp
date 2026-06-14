@@ -1,13 +1,15 @@
 import React from "react";
 import Image from "next/image";
 import Wrapper from "@/components/wrapper/wrapper";
+import { SearchIcon } from "../icons/icons";
+import { MobileSearch } from "./mobileSearch";
 
 export default function Hero() {
   return (
     <section className="pt-12 md:pt-20 pb-16 bg-[#FEFEFE]">
       <Wrapper>
         <div className="max-w-3xl mx-auto text-center space-y-4 md:space-y-6 mb-10 md:mb-12 px-4">
-          <h1 className="text-center justify-start text-Text-Dark text-5xl font-semibold font-['Inter'] ">
+          <h1 className="text-center justify-start text-Text-Dark text-2xl md:text-5xl font-semibold font-['Inter'] ">
             <span className="">Find a shortlet you can </span>
             <span className="text-primary">trust</span>
           </h1>
@@ -54,7 +56,10 @@ export default function Hero() {
           </div>
 
           {/* Mobile Search Bar */}
-          <div className="md:hidden space-y-4">
+          <MobileSearch />  
+
+
+          <div className="hidden space-y-4">
             <div className="bg-white rounded-2xl shadow-[0px_8px_30px_rgba(0,0,0,0.06)] border border-gray-100 p-4 space-y-4">
               <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-1 text-left">

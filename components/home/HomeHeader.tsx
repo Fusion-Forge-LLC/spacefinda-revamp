@@ -49,7 +49,7 @@ export default function HomeHeader() {
           <div className="flex flex-col p-6 gap-6">
             <Link 
               href="/auth/client/signin" 
-              className="text-lg font-medium text-[#333333] py-4 border-b border-gray-50"
+              className="text-lg font-medium text-[#333333] block text-center py-4 border-b border-gray-50"
               onClick={() => setIsMenuOpen(false)}
             >
               Sign in

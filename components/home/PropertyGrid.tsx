@@ -72,7 +72,8 @@ export default function PropertyGrid() {
   const handleScroll = (direction: "left" | "right") => {
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth;
-      const scrollValue = containerWidth / 4; 
+      const childWidth = containerRef.current.children[0].children[0].clientWidth;
+      const scrollValue = containerWidth / Math.floor(containerWidth / childWidth);
         containerRef.current.scrollBy({
             left: direction === "left" ? -scrollValue : scrollValue,
             behavior: "smooth",
@@ -84,14 +85,14 @@ export default function PropertyGrid() {
   return (
     <section className="py-24 bg-white">
       <Wrapper>
-        <div className="flex items-center justify-between mb-12">
+        <div className="flex max-md:gap-6 items-center justify-between mb-12">
           <div className="space-y-2">
             <h2 className="text-3xl font-bricolage font-bold text-[#333333]">Spaces in Ibadan</h2>
             <p className="text-[#666666]">All listings are reviewed and verified by SpaceFinda before going live.</p>
           </div>
           
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
+            <div className="md:flex items-center gap-2 hidden">
               <button className="btn-rounded" onClick={() => handleScroll("left")} disabled={scrollPosition <= 1}>
                 <ChevronLeft size={24} />
               </button>
@@ -99,15 +100,15 @@ export default function PropertyGrid() {
                 <ChevronRight size={24} />
               </button>
             </div>
-            <Link href="/listings" className="flex items-center gap-2 text-primary font-semibold hover:underline">
-              View all listings
+            <Link href="/listings" className="flex items-center gap-2 text-primary whitespace-nowrap font-semibold hover:underline">
+              View all <span className="hidden sm:inline">listings</span>
               <ChevronRight size={24} />
             </Link>
           </div>
         </div>
 
-        <div className="overflow-hidden" ref={containerRef}>
-          <ul className="flex w-full">
+        <div className="overflow-x-scroll md:overflow-hidden" ref={containerRef}>
+          <ul className="flex w-full max-md:gap-4">
             {[...PROPERTIES, ...PROPERTIES].map((prop, index) => (
               <PropertyCard key={`${prop.id}-${index}`} {...prop} />
             ))}

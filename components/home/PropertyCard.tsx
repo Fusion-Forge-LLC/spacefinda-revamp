@@ -25,7 +25,7 @@ export default function PropertyCard({
   isVerified = true,
 }: PropertyCardProps) {
   return (
-    <li className="group cursor-pointer w-1/4 px-2">
+    <li className="group cursor-pointer md:w-1/3 lg:w-1/4 md:px-2">
       <div className="relative aspect-308/160 rounded-t-lg overflow-hidden mb-4">
         <Image src={image} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
         
@@ -58,14 +58,14 @@ export default function PropertyCard({
         
         <div className="flex items-center justify-between pt-2 border-t border-gray-100">
           <div className="flex items-center gap-1 text-[#333333]">
-            <span className="font-bold text-lg">{price}</span>
-            <span className="text-xs opacity-60">/ night</span>
+            <span className="font-bold lg:text-lg">{price}</span>
+            <span className="text-xs md:text-[10px] lg:text-xs opacity-60">/ night</span>
           </div>
           
           <div className="flex items-center gap-1.5">
             <Image src="/icons/star.svg" alt="Rating" width={14} height={14} />
             <span className="font-semibold text-sm">{rating}</span>
-            <span className="text-xs text-[#666666]">({reviews} reviews)</span>
+            <span className="text-xs md:text-[10px] lg:text-xs text-[#666666]">({reviews} reviews)</span>
           </div>
         </div>
       </div>

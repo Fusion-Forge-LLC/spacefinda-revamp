@@ -36,7 +36,7 @@ export default function HowItWorks() {
           {STEPS.map((step, index) => (
             <div key={index} className="bg-[#FBFBFB] p-10 rounded-3xl relative overflow-hidden group hover:bg-white hover:shadow-xl transition-all duration-300">
               <div className="relative z-10 space-y-8">
-                <div className="h-14 w-14 bg-blue rounded-2xl flex items-center justify-center shadow-lg shadow-blue/20">
+                <div className="h-14 w-14 bg-blue rounded-2xl flex items-center justify-center shadow-lg shadow-blue/20 mx-auto">
                   <Image src={step.icon} alt={step.title} width={28} height={28} className="brightness-0 invert" />
                 </div>
 

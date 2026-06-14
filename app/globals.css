@@ -38,6 +38,7 @@
   --color-blue: var(--primary);
   --color-primary-background: var(--primary-container);
   --color-navy: var(--primary-container);
+  --color-primary-containers: #EEF5FF;
   --color-Grey-Pure-White: #A6A6A6;
   --color-Text-dark: #111111;
   --color-Text-body-text: #606060;

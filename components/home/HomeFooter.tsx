@@ -3,12 +3,13 @@ import Link from "next/link";
 import Image from "next/image";
 import Wrapper from "@/components/wrapper/wrapper";
 import Logo from "@/public/icons/logo.svg";
+import { FacebookIcon, InstagramIcon, LinkeDinIcon, TwitterIcon } from "../icons/icons";
 
 export default function HomeFooter() {
   return (
     <footer className="bg-black pt-24 pb-12 text-white overflow-hidden">
       <Wrapper>
-        <div className="flex flex-col md:flex-row justify-between gap-16 mb-24">
+        <div className="flex flex-col md:flex-row justify-between gap-16 sm:mb-24">
           <div className="space-y-6 flex-1">
             <Link href="/">
               <Image src={Logo} alt="Logo" className="text-white w-35 h-auto" />
@@ -55,6 +56,29 @@ export default function HomeFooter() {
             <Link href="/terms" className="hover:text-white transition-colors">Terms of service</Link>
           </div>
         </div>
+
+        <ul className="flex md:hidden gap-2">
+          <li>
+            <Link href="https://twitter.com/spacefinda" target="_blank" rel="noopener noreferrer">
+              <TwitterIcon />
+            </Link>
+          </li>
+          <li>
+            <Link href="https://www.linkedin.com/company/spacefinda" target="_blank" rel="noopener noreferrer">
+              <LinkeDinIcon />
+            </Link>
+          </li>
+          <li>
+            <Link href="https://www.instagram.com/spacefinda" target="_blank" rel="noopener noreferrer">
+              <InstagramIcon />
+            </Link>
+          </li>
+          <li>
+            <Link href="https://www.facebook.com/spacefinda" target="_blank" rel="noopener noreferrer">
+              <FacebookIcon />
+            </Link>
+          </li>
+        </ul>
 
         <div className="relative w-full aspect-1280/200 mt-12">
           <Image src="/icons/name.png" alt="SPACE FINDA" fill className="object-contain object-bottom " />

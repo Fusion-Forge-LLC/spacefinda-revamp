@@ -56,7 +56,9 @@ export default function Hero() {
           </div>
 
           {/* Mobile Search Bar */}
-          <MobileSearch />  
+          <div className="md:hidden">
+            <MobileSearch />  
+          </div>
 
 
           <div className="hidden space-y-4">

@@ -8,9 +8,11 @@ import Logo from "@/public/icons/logo.svg";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { AvatarDropdown } from "./homeavatar";
 
 export default function HomeHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // Placeholder for auth state
 
   return (
     <header className="py-4  border-b border-gray-100 bg-[#FEFEFE] sticky top-0 z-50">
@@ -22,23 +24,44 @@ export default function HomeHeader() {
           
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            <Link href="/auth/client/signin" className="text-[#333333] font-medium hover:text-primary transition-colors text-sm md:text-base">
-              Sign in
-            </Link>
-            <Link href="/auth/business">
-              <Button className="" >
-                Become a host
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Button variant={"ghost"}>Become a host</Button>
+                <AvatarDropdown />
+              </>
+            ) : (
+            <>  
+              <Link href="/auth/client/signin" className="text-[#333333] font-medium hover:text-primary transition-colors text-sm md:text-base">
+                <Button variant={"ghost"}>
+                Sign in
+                </Button>
+              </Link>
+              <Link href="/auth/business">
+                <Button className="" >
+                  Become a host
+                </Button>
+              </Link>
+            </> 
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button 
-            className="md:hidden p-2 text-[#333333]" 
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div>
+            {isAuthenticated ? (
+              <div className="flex items-center gap-2">
+                <Button variant={"ghost"}>Become a host</Button>
+                <AvatarDropdown />
+              </div>
+            ) : (
+            <button 
+              className="md:hidden p-2 text-[#333333]" 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            )}
+          </div>
+
         </div>
 
         {/* Mobile Nav Overlay */}

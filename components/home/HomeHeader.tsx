@@ -9,10 +9,11 @@ import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { AvatarDropdown } from "./homeavatar";
+import SignIn from "../authentication/sign-in";
 
 export default function HomeHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // Placeholder for auth state
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Placeholder for auth state
 
   return (
     <header className="py-4  border-b border-gray-100 bg-[#FEFEFE] sticky top-0 z-50">
@@ -31,11 +32,7 @@ export default function HomeHeader() {
               </>
             ) : (
             <>  
-              <Link href="/auth/client/signin" className="text-[#333333] font-medium hover:text-primary transition-colors text-sm md:text-base">
-                <Button variant={"ghost"}>
-                Sign in
-                </Button>
-              </Link>
+              <SignIn button={<Button variant={"ghost"}>Sign in</Button>} />
               <Link href="/auth/business">
                 <Button className="" >
                   Become a host
@@ -46,7 +43,7 @@ export default function HomeHeader() {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <div>
+          <div className="md:hidden">
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
                 <Button variant={"ghost"}>Become a host</Button>
@@ -54,7 +51,7 @@ export default function HomeHeader() {
               </div>
             ) : (
             <button 
-              className="md:hidden p-2 text-[#333333]" 
+              className="p-2 text-[#333333]" 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}

@@ -9,18 +9,20 @@ import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { AvatarDropdown } from "./homeavatar";
-import SignIn from "../authentication/sign-in";
+import AuthFlow from "../authentication/auth-flow";
 
 export default function HomeHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openAuthModal, setOpenAuthModal] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Placeholder for auth state
 
   return (
     <header className="py-4  border-b border-gray-100 bg-[#FEFEFE] sticky top-0 z-50">
+      <AuthFlow showModal={openAuthModal} setShowModal={setOpenAuthModal} />
       <Wrapper>
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Image src={Logo} alt="Logo" className="text-primary w-[40px] md:w-[60px] h-auto" />
+            <Image src={Logo} alt="Logo" className="text-primary w-10 md:w-15 h-auto" />
           </Link>
           
           {/* Desktop Nav */}
@@ -32,7 +34,7 @@ export default function HomeHeader() {
               </>
             ) : (
             <>  
-              <SignIn button={<Button variant={"ghost"}>Sign in</Button>} />
+            <Button variant={"ghost"} onClick={() => setOpenAuthModal(true)}>Sign in</Button>
               <Link href="/auth/business">
                 <Button className="" >
                   Become a host
@@ -63,7 +65,7 @@ export default function HomeHeader() {
 
         {/* Mobile Nav Overlay */}
         <div className={cn(
-          "fixed inset-0 top-[65px] bg-white z-40 md:hidden transition-transform duration-300 transform",
+          "fixed inset-0 top-16.25 bg-white z-40 md:hidden transition-transform duration-300 transform",
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         )}>
           <div className="flex flex-col p-6 gap-6">

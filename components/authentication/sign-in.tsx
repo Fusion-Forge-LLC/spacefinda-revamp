@@ -20,6 +20,8 @@ import { Input } from '../ui/input'
 import { Eyes, GoogleIcon } from '../icons/icons'
 import Link from 'next/link'
 import { Button } from '../ui/button'
+import ForgetPassword from './forget-password'
+import { authflow, AuthModal } from '@/@types/types'
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -27,7 +29,12 @@ const loginSchema = z.object({
   rememberMe: z.boolean().default(false).optional(),
 });
 
-function SignIn({button}: {button: React.ReactNode}) {
+function SignIn({
+    isOpen,
+    setStep,
+    setIsModalOpen,
+}: AuthModal ) {
+    const [forgetPasswordOpen, setForgetPasswordOpen] = React.useState(false);
     const [showPassword, setShowPassword] = React.useState(false);
     const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -37,6 +44,12 @@ function SignIn({button}: {button: React.ReactNode}) {
       rememberMe: false,
     },
   })
+
+  const openForgetPasswordModal = () => {
+    setStep("forgetPassword");
+    setForgetPasswordOpen(true);  
+  }
+
   function onSubmit(data: z.infer<typeof loginSchema>) {
         toast("You submitted the following values:", {
         description: (
@@ -56,7 +69,8 @@ function SignIn({button}: {button: React.ReactNode}) {
 
     return (
         <ModalWrapper 
-            trigger={button}
+            isOpen={isOpen}
+            setIsOpen={setIsModalOpen}
         >
             <form action="" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div>
@@ -105,9 +119,12 @@ function SignIn({button}: {button: React.ReactNode}) {
                     </FieldGroup>
                 <Field>
                     <FieldContent>
-                        <Link href="/auth/client/forgot-password" className="text-sm text-blue hover:text-Text-dark transition-colors self-end">
+                        <Button 
+                            variant={"link"} className="text-sm text-blue hover:text-Text-dark transition-colors self-end" 
+                            onClick={openForgetPasswordModal}
+                        >
                             Forgot password?
-                        </Link>
+                        </Button>
                         <Button size={"lg"} type="submit" className=" py-3 px-4 mt-3">
                             Sign In
                         </Button>

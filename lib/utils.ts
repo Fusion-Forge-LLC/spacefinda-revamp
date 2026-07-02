@@ -1,3 +1,4 @@
+import * as z from "zod"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -27,3 +28,10 @@ export function maskEmail(email: string): string {
 
   return `${visiblePart}${middleMask}${lastChar}@${domain}`;
 }
+
+export const passwordSchema = z.string()
+  .min(8, "At least 8 characters")
+  .regex(/[A-Z]/, "At least 1 uppercase")
+  .regex(/[a-z]/, "At least 1 lower case")
+  .regex(/[0-9]/, "At least 1 number")
+  .regex(/[^A-Za-z0-9]/, "Atleast 1 symbol");

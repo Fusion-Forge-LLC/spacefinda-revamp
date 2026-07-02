@@ -10,6 +10,7 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
+  --font-poppins: var(--font-poppins);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -40,6 +41,7 @@
   --color-navy: var(--primary-container);
   --color-primary-containers: #EEF5FF;
   --color-Grey-Pure-White: #A6A6A6;
+  --color-Grey-Light: #E9E9E9;
   --color-text-Grey-Muted: #F4F4F4;
   --color-light-Grey: #E9E9E9;
   --color-Text-dark: #111111;

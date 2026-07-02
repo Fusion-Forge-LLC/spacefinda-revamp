@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
 import ModalWrapper from '../ui/modal/dialog-wrapper'
 import { Email } from '../icons/icons'
 import { Button } from '../ui/button'
-import { authflow, AuthModal } from '@/@types/types'
+import { AuthModal } from '@/@types/types'
 
 function CheckEmail({
     isOpen, 

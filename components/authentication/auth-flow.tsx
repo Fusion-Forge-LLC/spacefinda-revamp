@@ -4,6 +4,9 @@ import ForgetPassword from './forget-password'
 import { authflow } from '@/@types/types';
 import CheckEmail from './check-email';
 import VerifyEmail from './verify-email';
+import ResetPassword from './reset-password';
+import SuccessMessage from './success';
+import SignUp from './sign-up';
 
 function AuthFlow({showModal, setShowModal}: {showModal: boolean; setShowModal: (showModal: boolean) => void}) {
     const [step, setStep] = React.useState<authflow>("signIn");
@@ -38,8 +41,25 @@ function AuthFlow({showModal, setShowModal}: {showModal: boolean; setShowModal: 
                                     isOpen={showModal && step === "verify-email"} 
                                     setStep={setStep}
                                     setIsModalOpen={setShowModal}
-                                />) : ""
-                            
+                                />) : step === "resetPassword" ? (
+                                    <ResetPassword
+                                        isOpen={showModal && step === "resetPassword"}
+                                        setStep={setStep}
+                                        setIsModalOpen={setShowModal}
+                                    />
+                                ) : step === "success" ? ( 
+                                    <SuccessMessage 
+                                        isOpen={showModal && step === "success"}
+                                        setStep={setStep}
+                                        setIsModalOpen={setShowModal}
+                                    />
+                                ): step === "sign-up" ? (
+                                    <SignUp 
+                                        isOpen={showModal && step === "sign-up"}
+                                        setStep={setStep}
+                                        setIsModalOpen={setShowModal}
+                                    />
+                                ) : null
                         }
                 </>
             }

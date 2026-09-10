@@ -19,7 +19,7 @@ interface ModalWrapperProps {
   children: ReactNode;
 }
 
-function ModalWrapper({
+function WishlistModalWrapper({
   trigger,
   title,
   isOpen,
@@ -49,4 +49,4 @@ function ModalWrapper({
   );
 }
 
-export default ModalWrapper;
+export default WishlistModalWrapper;

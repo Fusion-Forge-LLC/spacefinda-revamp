@@ -1,10 +1,15 @@
+"use client"
+
 import React from "react";
 import Image from "next/image";
 import Wrapper from "@/components/wrapper/wrapper";
 import { SearchIcon } from "../icons/icons";
 import { MobileSearch } from "./mobileSearch";
 
-export default function Hero() {
+export default function Hero({heroRef}: {heroRef: React.RefObject<HTMLDivElement | null>}) {
+
+  
+
   return (
     <section className="pt-12 md:pt-20 pb-16 bg-[#FEFEFE]">
       <Wrapper>
@@ -18,9 +23,9 @@ export default function Hero() {
           </p>
         </div>
 
-        <div className="max-w-5xl mx-auto px-4">
+        <div className="max-w-5xl mx-auto px-4" id="searchbar">
           {/* Desktop Search Bar */}
-          <div className="hidden md:flex bg-white rounded-full shadow-[0px_8px_30px_rgba(0,0,0,0.06)] border border-gray-100 p-2 pl-8 items-center justify-between">
+          <div ref={heroRef} className="hidden md:flex bg-white rounded-full shadow-[0px_8px_30px_rgba(0,0,0,0.06)] border border-gray-100 p-2 pl-8 items-center justify-between">
             <div className="flex-1 grid grid-cols-4 divide-x divide-gray-100">
               <button className="px-4 py-2 flex flex-col justify-center text-left hover:bg-gray-50 transition-colors rounded-l-full">
                 <span className="text-[11px] font-bold text-[#333333] uppercase tracking-wider mb-1">Space Type</span>

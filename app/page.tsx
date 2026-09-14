@@ -7,12 +7,12 @@ import ExpansionGrid from "@/components/home/ExpansionGrid";
 import HowItWorks from "@/components/home/HowItWorks";
 import HostCTA from "@/components/home/HostCTA";
 import HomeFooter from "@/components/home/HomeFooter";
+import HeroHeader from "@/components/home/hero-header";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#FEFEFE]">
-      <HomeHeader />
-      <Hero />
+      <HeroHeader />
       <TrustSignals />
       <PropertyGrid />
       <ExpansionGrid />

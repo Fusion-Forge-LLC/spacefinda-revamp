@@ -1,9 +1,11 @@
 import React from "react";
 import Image from "next/image";
-import { Heart } from "lucide-react";
 import Link from "next/link";
+import { HeartFilled, HeartOutline } from "../icons/icons";
+import AddWishlist from "../wishlist/add-wishlist";
 
 interface PropertyCardProps {
+  id: string;
   image: string;
   title: string;
   location: string;
@@ -15,6 +17,7 @@ interface PropertyCardProps {
 }
 
 export default function PropertyCard({
+  id,
   image,
   title,
   location,
@@ -24,8 +27,15 @@ export default function PropertyCard({
   reviews,
   isVerified = true,
 }: PropertyCardProps) {
+  const [isOpen, setIsOpen] = React.useState(false);
   return (
     <li className="group cursor-pointer md:w-1/3 lg:w-1/4 md:px-2">
+      <AddWishlist 
+        isOpen={isOpen}
+        setIsModalOpen={setIsOpen}
+        id={id}
+        thumbnail={image}
+      />
       <div className="relative aspect-308/160 rounded-t-lg overflow-hidden mb-4">
         <Image src={image} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
         
@@ -36,8 +46,11 @@ export default function PropertyCard({
           </div>
         )}
         
-        <button className="absolute top-2.5 right-2.5 h-8 w-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/40 transition-colors">
-          <Heart className="text-white" size={18} />
+        <button
+          onClick={() => setIsOpen(true)}
+          className="absolute top-2.5 right-2.5 h-8 w-8 flex items-center justify-center hover:scale-110 transition-transform duration-300"
+        >
+          {id === "1" ? <HeartFilled /> : <HeartOutline />}
         </button>
       </div>
       

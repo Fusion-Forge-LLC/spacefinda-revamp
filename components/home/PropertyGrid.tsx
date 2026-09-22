@@ -1,72 +1,14 @@
 "use client"
 
 import React, { useRef, useState } from "react";
-import Image from "next/image";
 import Wrapper from "@/components/wrapper/wrapper";
 import PropertyCard from "./PropertyCard";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { DUMMY_PROPERTIES } from "@/lib/dummy";
+import { cn } from "@/lib/utils";
 
-const PROPERTIES = [
-  {
-    id: "1",
-    image: "/images/listing-1.png",
-    title: "Cosy 2-bed Apartment, Bodija...",
-    location: "Bodija · 2 guests · Entire apartment",
-    amenities: [
-      { icon: "/icons/wifi.svg", label: "Wifi" },
-      { icon: "/icons/power.svg", label: "Power" },
-      { icon: "/icons/garage.svg", label: "Garage" },
-    ],
-    price: "₦120,000",
-    rating: 4.5,
-    reviews: 120,
-  },
-  {
-    id: "2",
-    image: "/images/listing-2.png",
-    title: "Cosy 2-bed Apartment, Bodija...",
-    location: "Bodija · 2 guests · Entire apartment",
-    amenities: [
-      { icon: "/icons/wifi.svg", label: "Wifi" },
-      { icon: "/icons/power.svg", label: "Power" },
-      { icon: "/icons/garage.svg", label: "Garage" },
-    ],
-    price: "₦120,000",
-    rating: 4.5,
-    reviews: 120,
-  },
-  {
-    id: "3",
-    image: "/images/listing-3.png",
-    title: "Cosy 2-bed Apartment, Bodija...",
-    location: "Bodija · 2 guests · Entire apartment",
-    amenities: [
-      { icon: "/icons/wifi.svg", label: "Wifi" },
-      { icon: "/icons/power.svg", label: "Power" },
-      { icon: "/icons/garage.svg", label: "Garage" },
-    ],
-    price: "₦120,000",
-    rating: 4.5,
-    reviews: 120,
-  },
-  {
-    id: "4",
-    image: "/images/listing-4.png",
-    title: "Cosy 3-bed Apartment, Bodija...",
-    location: "Bodija · 2 guests · Entire apartment",
-    amenities: [
-      { icon: "/icons/wifi.svg", label: "Wifi" },
-      { icon: "/icons/power.svg", label: "Power" },
-      { icon: "/icons/garage.svg", label: "Garage" },
-    ],
-    price: "₦120,000",
-    rating: 4.5,
-    reviews: 120,
-  },
-];
-
-export default function PropertyGrid() {
+export default function PropertyGrid({title, subtitle, showListingLink, mb="mb-12"}: {title: string, subtitle: string, showListingLink?: boolean, mb?: string}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const handleScroll = (direction: "left" | "right") => {
@@ -83,16 +25,16 @@ export default function PropertyGrid() {
   }
   
   return (
-    <section className="py-24 bg-white">
+    <section className="py-10 sm:py-24 bg-white max-md:px-4">
       <Wrapper>
-        <div className="flex max-md:gap-6 items-center justify-between mb-12">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-bricolage font-bold text-[#333333]">Spaces in Ibadan</h2>
-            <p className="text-[#666666]">All listings are reviewed and verified by SpaceFinda before going live.</p>
+        <div className={cn(mb, "flex max-md:gap-6 items-center justify-between")}>
+          <div className="sm:space-y-2">
+            <h2 className="text-xl sm:text-3xl font-bricolage font-bold text-[#333333]">{title}</h2>
+            <p className="text-[#666666] max-sm:text-sm">{subtitle}</p>
           </div>
           
           <div className="flex items-center gap-6">
-            <div className="md:flex items-center gap-2 hidden">
+            <div className="flex items-center gap-2">
               <button className="btn-rounded" onClick={() => handleScroll("left")} disabled={scrollPosition <= 1}>
                 <ChevronLeft size={24} />
               </button>
@@ -100,16 +42,16 @@ export default function PropertyGrid() {
                 <ChevronRight size={24} />
               </button>
             </div>
-            <Link href="/listings" className="flex items-center gap-2 text-primary whitespace-nowrap font-semibold hover:underline">
+            {showListingLink && <Link href="/listings" className="flex items-center gap-2 text-primary whitespace-nowrap font-semibold hover:underline">
               View all <span className="hidden sm:inline">listings</span>
               <ChevronRight size={24} />
-            </Link>
+            </Link>}
           </div>
         </div>
 
         <div className="overflow-x-scroll md:overflow-hidden" ref={containerRef}>
           <ul className="flex w-full max-md:gap-4">
-            {[...PROPERTIES, ...PROPERTIES].map((prop, index) => (
+            {[...DUMMY_PROPERTIES, ...DUMMY_PROPERTIES].map((prop, index) => (
               <PropertyCard key={`${prop.id}-${index}`} {...prop} />
             ))}
           </ul>

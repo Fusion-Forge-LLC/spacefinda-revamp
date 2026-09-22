@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { HeartFilled, HeartOutline } from "../icons/icons";
 import AddWishlist from "../wishlist/add-wishlist";
+import { Star1 } from "iconsax-reactjs";
 
 interface PropertyCardProps {
   id: string;
@@ -76,7 +77,11 @@ export default function PropertyCard({
           </div>
           
           <div className="flex items-center gap-1.5">
-            <Image src="/icons/star.svg" alt="Rating" width={14} height={14} />
+            <div
+                className="overflow-hidden h-full text-[#FACC15] size-3"
+            >
+              <Star1 size={12} variant="TwoTone" className="fill-current" />
+            </div>
             <span className="font-semibold text-sm">{rating}</span>
             <span className="text-xs md:text-[10px] lg:text-xs text-[#666666]">({reviews} reviews)</span>
           </div>

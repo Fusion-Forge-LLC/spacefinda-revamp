@@ -47,6 +47,7 @@
   --color-Text-dark: #111111;
   --color-Text-body-text: #606060;
   --color-Text-Text-Light: #fefefe;
+  --color-Body-Text: #616161;
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -132,7 +133,10 @@
 
 @layer components {
   .btn-rounded {
-    @apply h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center enabled:hover:bg-gray-50 text-[#606060] disabled:text-[#A6A6A6] disabled:cursor-not-allowed cursor-pointer;
+    @apply h-7 w-7 md:h-10 md:w-10 rounded-full border border-gray-100 flex items-center justify-center enabled:hover:bg-gray-50 text-[#606060] disabled:text-[#A6A6A6] disabled:cursor-not-allowed cursor-pointer;
+  }
+  .share-btn {
+    @apply flex items-center gap-2 border text-Body-Text rounded-full px-3 py-1.5 border-text-Grey-Muted hover:bg-text-Grey-Muted font-["Geist"];
   }
 }
 

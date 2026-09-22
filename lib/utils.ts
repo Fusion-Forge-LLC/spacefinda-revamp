@@ -35,3 +35,30 @@ export const passwordSchema = z.string()
   .regex(/[a-z]/, "At least 1 lower case")
   .regex(/[0-9]/, "At least 1 number")
   .regex(/[^A-Za-z0-9]/, "Atleast 1 symbol");
+
+export const formatLabel = (key: string, count: number) => {
+  // Convert camelCase or standard keys to words (e.g., 'bedroom' -> 'Bedroom')
+  const formattedKey = key.replace(/([A-Z])/g, ' $1').toLowerCase();
+  
+  // Pluralization logic
+  const isPlural = count !== 1;
+  const label = isPlural ? `${formattedKey}s` : formattedKey;
+
+  // Capitalize first letter
+  return label.charAt(0).toUpperCase() + label.slice(1);
+};
+
+export const formatCount = (count: number, compact: boolean): string => {
+  return new Intl.NumberFormat('en-US', {
+    notation: compact ? 'compact' : 'standard',
+    maximumFractionDigits: 1,
+  }).format(count);
+};
+
+export const formatNaira = (amount: number): string => {
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    maximumFractionDigits: 0,
+  }).format(amount);
+};

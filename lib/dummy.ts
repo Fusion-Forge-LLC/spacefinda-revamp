@@ -1,0 +1,58 @@
+export const DUMMY_PROPERTIES = [
+  {
+    id: "1",
+    image: "/images/listing-1.png",
+    title: "Cosy 2-bed Apartment, Bodija...",
+    location: "Bodija · 2 guests · Entire apartment",
+    amenities: [
+      { icon: "/icons/wifi.svg", label: "Wifi" },
+      { icon: "/icons/power.svg", label: "Power" },
+      { icon: "/icons/garage.svg", label: "Garage" },
+    ],
+    price: "₦120,000",
+    rating: 4.5,
+    reviews: 120,
+  },
+  {
+    id: "2",
+    image: "/images/listing-2.png",
+    title: "Cosy 2-bed Apartment, Bodija...",
+    location: "Bodija · 2 guests · Entire apartment",
+    amenities: [
+      { icon: "/icons/wifi.svg", label: "Wifi" },
+      { icon: "/icons/power.svg", label: "Power" },
+      { icon: "/icons/garage.svg", label: "Garage" },
+    ],
+    price: "₦120,000",
+    rating: 4.5,
+    reviews: 120,
+  },
+  {
+    id: "3",
+    image: "/images/listing-3.png",
+    title: "Cosy 2-bed Apartment, Bodija...",
+    location: "Bodija · 2 guests · Entire apartment",
+    amenities: [
+      { icon: "/icons/wifi.svg", label: "Wifi" },
+      { icon: "/icons/power.svg", label: "Power" },
+      { icon: "/icons/garage.svg", label: "Garage" },
+    ],
+    price: "₦120,000",
+    rating: 4.5,
+    reviews: 120,
+  },
+  {
+    id: "4",
+    image: "/images/listing-4.png",
+    title: "Cosy 3-bed Apartment, Bodija...",
+    location: "Bodija · 2 guests · Entire apartment",
+    amenities: [
+      { icon: "/icons/wifi.svg", label: "Wifi" },
+      { icon: "/icons/power.svg", label: "Power" },
+      { icon: "/icons/garage.svg", label: "Garage" },
+    ],
+    price: "₦120,000",
+    rating: 4.5,
+    reviews: 120,
+  },
+];

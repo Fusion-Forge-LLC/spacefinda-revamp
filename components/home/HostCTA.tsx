@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function HostCTA() {
   return (
     <section className="py-24 bg-navy text-center">
-      <Wrapper>
+      <Wrapper className="px-4">
         <div className="max-w-2xl mx-auto space-y-8">
           <h2 className="text-4xl md:text-5xl font-bricolage font-bold text-white">Have a space in Nigeria?</h2>
           <p className="text-white text-lg">

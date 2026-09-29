@@ -1,6 +1,9 @@
 import { formatNaira } from '@/lib/utils'
 import Link from 'next/link'
 import React from 'react'
+import { MobileDrawer } from '../ui/drawer/mobile-drawer';
+import { Button } from '../ui/button';
+import CheckInComponent from './check-in-component';
 
 const amount = 120000;
 
@@ -18,6 +21,20 @@ function BookingMobile() {
                 <p className="justify-start text-Text-body-text text-base font-normal font-['Geist'] leading-6">
                     Refundable caution fee of ₦10,000 applies
                 </p>
+
+                <MobileDrawer 
+                    title='Reserve your stay'
+                    triggerBtn={
+                        <Button className='w-full h-12 roundded-xl' size={"lg"}>
+                            Book now
+                        </Button>
+                    }
+                >
+                    <div className='space-y-2'>
+                        <span>Your dates</span>
+                        <CheckInComponent />
+                    </div>
+                </MobileDrawer>
             </div>
         </div>
     )

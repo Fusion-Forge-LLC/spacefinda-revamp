@@ -1,19 +1,13 @@
 import { formatNaira } from '@/lib/utils'
-import { CheckIn } from '../icons/icons'
 import { Button } from '../ui/button'
 import { Check } from 'lucide-react'
 import { InfoCircle } from 'iconsax-reactjs'
 import Link from "next/link"
+import CheckInComponent from './check-in-component'
+import BookingSummary from './booking-summary'
+import BookingNote from './booking-note'
 
 const amount = 120000
-const items = [
-  { label: "1", value: "1" },
-  { label: "2", value: "2" },
-  { label: "3", value: "3" },
-  { label: "4", value: "4" },
-  { label: "5", value: "5" },
-  { label: "6+", value: "6+" },
-]
 
 function BookingCard() {
     return (
@@ -30,40 +24,7 @@ function BookingCard() {
                         </p>
                     </header>
 
-                    <div className='grid grid-cols-2'>
-                        <button className='p-3 rounded-l-xl border border-Grey-Light inline-flex justify-between items-center'>
-                            <span className='flex flex-col items-start gap-px text-sm font-["Geist"]'>
-                                <span className='text-Text-dark font-medium'>Check - in</span>
-                                <span className='text-[#888]'>Add date</span>
-                            </span>
-                            <CheckIn />
-                        </button>
-                        <button className='p-3 rounded-r-xl border-r border-y border-Grey-Light inline-flex justify-between items-center'>
-                            <span className='flex flex-col items-start gap-px text-sm font-["Geist"]'>
-                                <span className='text-Text-dark font-medium'>Check - Out</span>
-                                <span className='text-[#888]'>Add date</span>
-                            </span>
-                            <CheckIn className='-scale-x-100' />
-                        </button>   
-                    </div>
-
-                    <div>
-                        <label htmlFor="add-guest" className='p-3 rounded-xl border border-Grey-Light flex flex-col text-Text-dark font-medium flex flex-col items-start gap-px text-sm font-["Geist"]'>
-                            Guest
-                            <select name="" id="add-guest" className='text-[#888] w-full'>
-                                <option value="">{"Add guest"}</option>
-                                {items.map((item) => {
-                                    return(
-                                        <option key={item.label} value={item.value}>{item.label}</option>
-                                    )
-                                })}
-                            </select>
-                        </label>
-                    </div>
-
-                    <Button className='w-full h-12 roundded-xl' size={"lg"}>
-                        Book now
-                    </Button>
+                    <CheckInComponent />                    
                     
                     <div className='flex items-center justify-center text-sm leading-[150%] text-[#888]'>
                         <Check color='#888' size={14}/>
@@ -71,28 +32,9 @@ function BookingCard() {
                     </div>
                 </form>
 
-                <ul className='space-y-2.5'>
-                    <li className='flex items-center justify-between leading-[150%]'>
-                        <span className='text-Body-Text'>{formatNaira(amount)} x 1 nights</span>
-                        <span className='text-Text-dark'>{formatNaira(amount)}</span>
-                    </li>
-                    <li className='flex items-center justify-between leading-[150%]'>
-                        <span className='text-Body-Text'>Caution fee</span>
-                        <span className='text-Text-dark'>{formatNaira(10000)}</span>
-                    </li>
-                    <li className='bg-text-Grey-Muted h-px' />
-                    <li className='flex items-center justify-between leading-[150%]'>
-                        <span className='text-Body-Text'>Total</span>
-                        <span className='text-Text-dark'>{formatNaira(130000)}</span>
-                    </li>
-                </ul>
+                <BookingSummary amount={amount} />
 
-                <div className='text-Body-Text flex item-start gap-2 bg-primary-containers p-3 rounded-md my-3'>
-                    <div className='shrink-0 pt-1'>
-                        <InfoCircle color='#205BF3' size={16} className=''/>
-                    </div>
-                    <p className=''>This listing has a Flexible cancellation policy. Cancel at least 24 hours check-in for a full rent  refund.</p>
-                </div>
+                <BookingNote />
 
                 <p className='text-Body-Text text-center'>
                     Something feels off? <Link href='/report-lsting' className='text-primary underline'>Report this listings</Link>

@@ -19,7 +19,7 @@ const CITIES = [
 export default function ExpansionGrid() {
   return (
     <section className="sm:py-24 bg-[#FEFEFE]">
-      <Wrapper>
+      <Wrapper className="px-4">
         <div className="max-w-2xl mb-12">
           <div className="inline-block px-3 py-1 bg-[#F7F7EF] border border-[#9E8549] rounded-full text-[#9E8549] text-[10px] font-bold tracking-widest uppercase mb-4">
             Expanding across Nigeria

@@ -28,7 +28,7 @@ export default function HomeHeader({isPastHero, heroRef}: {isPastHero: boolean; 
   return (
     <header className="py-4  border-b border-gray-100 bg-[#FEFEFE] sticky top-0 z-50">
       <AuthFlow showModal={openAuthModal} setShowModal={setOpenAuthModal} />
-      <Wrapper>
+      <Wrapper className="px-4">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2">
             <Image src={Logo} alt="Logo" className="text-primary w-10 md:w-15 h-auto" />

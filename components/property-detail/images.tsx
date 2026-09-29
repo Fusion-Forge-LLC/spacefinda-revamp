@@ -8,8 +8,10 @@ import { Button } from '../ui/button';
 import { ArrowLeft, Export, ExportCircle, ExportCurve } from 'iconsax-reactjs';
 import { Heart } from 'lucide-react';
 import Link from 'next/link';
+import { sampleImages } from '@/content/site';
+import ShareDialog from '../ui/modal/dialog-share';
 
-const images = ["/images/listings/cozy-living-room.jpg", "/images/listings/sunlit-lounge.jpg", "/images/listings/cozy-bedroom.jpg", ]
+const images = sampleImages;
 
 function PropertyGallery() {
   if (!images || images.length === 0) return null;
@@ -24,9 +26,16 @@ function PropertyGallery() {
                 <Link href={"/listings"} className='h-7 w-7 rounded-full bg-white grid place-content-center'>
                     <ArrowLeft color='#111' size={14} />
                 </Link>
-                <button className='h-7 w-7 rounded-full bg-white grid place-content-center ml-auto'>
-                    <ExportCurve color='#111' size={14} />
-                </button>
+                <ShareDialog
+                    triggerBtn={
+                        <button className='h-7 w-7 rounded-full bg-white grid place-content-center ml-auto'>
+                            <ExportCurve color='#111' size={14} />
+                        </button>
+                    }
+                    imageSrc={images[0]} 
+                    title='Cozy 2BR Apartment in Ibadan' 
+                    slug='cozy-2br-apartment-in-ibadan' 
+                />
                 <button className='h-7 w-7 rounded-full bg-white grid place-content-center'>
                     <Heart color='#111' size={14} />
                 </button>

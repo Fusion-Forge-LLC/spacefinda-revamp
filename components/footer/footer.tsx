@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 export default function Footer({className}:{className?: string}) {
   return (
-    <footer className={cn(className, "bg-black pt-24 pb-12 text-white overflow-hidden")}>
+    <footer className={cn(className, "bg-black pt-24 pb-12 px-4 text-white overflow-hidden")}>
       <Wrapper>
         <div className="flex flex-col md:flex-row justify-between gap-16 sm:mb-24">
           <div className="space-y-6 flex-1">

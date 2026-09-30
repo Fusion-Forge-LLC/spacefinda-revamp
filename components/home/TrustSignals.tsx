@@ -24,7 +24,7 @@ const SIGNALS = [
 export default function TrustSignals() {
   return (
     <section className="bg-primary-background py-12">
-      <Wrapper>
+      <Wrapper className="px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 lg:gap-8 md:divide-x divide-white/10">
           {SIGNALS.map((signal, index) => (
             <div key={index} className="flex items-center gap-5 md:px-4 lg:px-8 first:pl-0 last:pr-0">

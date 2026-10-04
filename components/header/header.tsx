@@ -11,15 +11,15 @@ import Image from "next/image";
 import { AvatarDropdown } from "../home/homeavatar";
 import AuthFlow from "../authentication/auth-flow";
 
-export default function HomeHeader({className}:{className?: string}) {
+export default function HomeHeader({className, authenticated = false}:{className?: string; authenticated?: boolean}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openAuthModal, setOpenAuthModal] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Placeholder for auth state
+  const [isAuthenticated, setIsAuthenticated] = useState(authenticated); // Placeholder for auth state
 
   return (
     <header className={cn(className, "py-4  border-b border-gray-100 bg-[#FEFEFE] sticky top-0 z-50")}>
       <AuthFlow showModal={openAuthModal} setShowModal={setOpenAuthModal} />
-      <Wrapper>
+      <Wrapper className="max-md:px-4">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2">
             <Image src={Logo} alt="Logo" className="text-primary w-10 md:w-15 h-auto" />

@@ -2,6 +2,7 @@ import React from "react";
 import { format } from "date-fns";
 import { CalendarDays } from "lucide-react";
 import { Calendar, CalendarDayButton } from "@/components/ui/calendar";
+import { useIsMobile } from "@/hooks/use-media-query";
 import StepHeading from "../step-heading";
 import RadioCard from "../radio-card";
 import { AVAILABILITY_OPTIONS, StepProps } from "../types";
@@ -33,6 +34,7 @@ const CalendarCard = ({ summary, children }: { summary: React.ReactNode; childre
 );
 
 export default function AvailabilityStep({ draft, update }: StepProps) {
+  const isMobile = useIsMobile();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -72,7 +74,7 @@ export default function AvailabilityStep({ draft, update }: StepProps) {
               onSelect={(availableFrom) => update({ availableFrom })}
               disabled={{ before: today }}
               startMonth={today}
-              numberOfMonths={2}
+              numberOfMonths={isMobile ? 1 : 2}
               showOutsideDays={false}
               classNames={listingCalendarClassNames}
               components={{ DayButton: (props) => <CalendarDayButton {...props} className={dayButtonClassName} /> }}
@@ -105,7 +107,7 @@ export default function AvailabilityStep({ draft, update }: StepProps) {
               onSelect={(dates) => update({ blockedDates: dates ?? [] })}
               disabled={{ before: today }}
               startMonth={today}
-              numberOfMonths={2}
+              numberOfMonths={isMobile ? 1 : 2}
               showOutsideDays={false}
               classNames={listingCalendarClassNames}
               components={{ DayButton: (props) => <CalendarDayButton {...props} className={dayButtonClassName} /> }}

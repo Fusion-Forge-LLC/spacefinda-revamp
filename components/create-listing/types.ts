@@ -190,7 +190,8 @@ export const RECOMMENDED_PHOTOS = 5;
 
 export interface ListingPhoto {
   id: string;
-  file: File;
+  // Photos already saved on a listing only have a url
+  file?: File;
   url: string;
 }
 

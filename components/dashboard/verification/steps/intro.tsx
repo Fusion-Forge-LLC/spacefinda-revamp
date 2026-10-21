@@ -9,13 +9,13 @@ const BENEFITS = [
   { icon: ShieldCheck, title: "Build renter trust", description: "Renters are 3x more likely to book a verified owner. Your badge appears on every listing." },
 ];
 
-export default function IntroStep({ onNext }: { onNext: () => void }) {
+const DEFAULT_DESCRIPTION =
+  "SpaceFinda requires identity verification to build trust between renters and property owners. This is a one-time process and takes about 3 minutes.";
+
+export default function IntroStep({ description = DEFAULT_DESCRIPTION, onNext }: { description?: string; onNext: () => void }) {
   return (
     <>
-      <StepHeader title="Let us confirm who you are">
-        SpaceFinda requires identity verification to build trust between renters and property owners. This is a one-time
-        process and takes about 3 minutes.
-      </StepHeader>
+      <StepHeader title="Let us confirm who you are">{description}</StepHeader>
 
       <div className="space-y-4">
         {BENEFITS.map(({ icon: Icon, title, description }) => (

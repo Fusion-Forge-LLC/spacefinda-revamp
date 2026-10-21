@@ -24,7 +24,7 @@ import { INITIAL_DRAFT, ListingDraft, ListingStep, MIN_PHOTOS, PROGRESS_STEPS, P
 const filled = (...values: string[]) => values.every((v) => v.trim().length > 0);
 
 // Whether "Save and continue" is enabled for each step
-const canContinue = (step: ProgressStep, draft: ListingDraft) => {
+export const canContinue = (step: ProgressStep, draft: ListingDraft) => {
   switch (step) {
     case "space-type":
       return draft.spaceType !== null;

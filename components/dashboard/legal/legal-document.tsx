@@ -7,21 +7,31 @@ import LegalToc from "./legal-toc";
 import { LegalDocument as LegalDocumentType } from "./types";
 import { LEGAL_EFFECTIVE_DATE } from "./content";
 
-export default function LegalDocument({ doc }: { doc: LegalDocumentType }) {
+// `backHref`/`backLabel` let the host dashboard show these documents with a link back to its own help page
+export default function LegalDocument({
+  doc,
+  backHref = "/dashboard/legal",
+  backLabel = "Legal & privacy",
+}: {
+  doc: LegalDocumentType;
+  backHref?: string;
+  backLabel?: string;
+}) {
   const tocFooter = `Nigeria Data Protection Act (NDPA) 2023 compliant · Last updated ${LEGAL_EFFECTIVE_DATE}`;
 
   return (
     <Wrapper className="py-6 md:py-10 max-md:px-4">
       <div className="flex gap-10 lg:gap-16">
         <aside className="hidden md:block w-56 shrink-0">
-          <div className="sticky top-28">
-            <BackButton href="/dashboard/legal" label="Legal & privacy" className="mb-6" />
+          {/* Capped to the viewport so short screens scroll the contents list on its own, not off the page */}
+          <div className="sticky top-28 max-h-[calc(100dvh-8rem)] overflow-y-auto">
+            <BackButton href={backHref} label={backLabel} className="mb-6" />
             <LegalToc sections={doc.sections} footer={tocFooter} />
           </div>
         </aside>
 
         <article className="flex-1 min-w-0 max-w-172">
-          <BackButton href="/dashboard/legal" className="mb-4 md:hidden" />
+          <BackButton href={backHref} className="mb-4 md:hidden" />
           <h1 className="text-xl md:text-2xl font-semibold text-Text-dark">{doc.title}</h1>
           <p className="mt-2 text-sm text-Text-body-text">
             SpaceFinda Technologies Ltd · Effective date: {LEGAL_EFFECTIVE_DATE}

@@ -29,7 +29,16 @@ const messageSchema = z.object({
 
 type MessageForm = z.infer<typeof messageSchema>;
 
-export default function SendMessageModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+// Hosts pass their own `categories` (payouts, damage claims, listings…)
+export default function SendMessageModal({
+  open,
+  onOpenChange,
+  categories = CATEGORIES,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  categories?: string[];
+}) {
   const [sent, setSent] = useState(false);
   const form = useForm<MessageForm>({
     resolver: zodResolver(messageSchema),
@@ -75,7 +84,7 @@ export default function SendMessageModal({ open, onOpenChange }: { open: boolean
                         <SelectValue placeholder="Select a category" />
                       </SelectTrigger>
                       <SelectContent position="popper">
-                        {CATEGORIES.map((c) => (
+                        {categories.map((c) => (
                           <SelectItem key={c} value={c}>{c}</SelectItem>
                         ))}
                       </SelectContent>

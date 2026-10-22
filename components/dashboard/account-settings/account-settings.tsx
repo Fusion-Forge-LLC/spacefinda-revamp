@@ -30,7 +30,7 @@ const NOTIFICATIONS = [
   },
 ];
 
-function SettingRow({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
+export function SettingRow({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between gap-4 py-4 border-b border-light-Grey">
       <div className="min-w-0">

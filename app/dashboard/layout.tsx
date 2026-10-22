@@ -11,7 +11,7 @@ function Layout({children}:{children: React.ReactNode}) {
         <Toaster
           position='bottom-center'
           style={{ '--width': '240px' } as React.CSSProperties}
-          toastOptions={{ style: { background: '#111111', color: '#FFFFFF', border: 'none', borderRadius: '9999px', justifyContent: 'center' } }}
+          toastOptions={{ style: { background: '#FFFFFF', color: '#111111', border: '1px solid #EAEAEA', boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)', borderRadius: '9999px', justifyContent: 'center' } }}
         />
     </div>
   )

@@ -33,7 +33,7 @@ export default function PropertyCard({
 }: PropertyCardProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   return (
-    <li className="group cursor-pointer md:w-1/3 lg:w-1/4 md:px-2">
+    <li className="group relative cursor-pointer md:w-1/3 lg:w-1/4 md:px-2">
       <AddWishlist 
         isOpen={isOpen}
         setIsModalOpen={setIsOpen}
@@ -55,15 +55,18 @@ export default function PropertyCard({
         )}
         
         <button
+          type="button"
+          aria-label="Add to wishlist"
           onClick={() => setIsOpen(true)}
-          className="absolute top-2.5 right-2.5 h-8 w-8 flex items-center justify-center hover:scale-110 transition-transform duration-300"
+          className="absolute z-10 top-2.5 right-2.5 h-8 w-8 flex items-center justify-center hover:scale-110 transition-transform duration-300"
         >
           {id === "1" ? <HeartFilled /> : <HeartOutline />}
         </button>
       </div>
       
       <div className="space-y-2">
-        <Link className="hover:underline hover:bg-primary" href={`/listings/${id}`}>
+        {/* Stretched link: the ::after overlay makes the whole card clickable */}
+        <Link className="hover:underline after:absolute after:inset-0" href={`/listings/${id}`}>
           <h3 className="font-semibold text-lg text-[#333333] truncate">{title}</h3>
         </Link>
         <p className="text-sm text-[#666666] truncate">{location}</p>

@@ -13,7 +13,7 @@ export default function HostCTA() {
             List your shortlet apartment on SpaceFinda and reach verified renters. 
             Get paid automatically on check in day, with no chasing or delays.
           </p>
-          <Link href="/auth/business" className="inline-block">
+          <Link href="/host/create-listing" className="inline-block">
             <Button className="bg-white hover:scale-105 transition-all text-primary hover:bg-gray-100 px-10 py-7 rounded-xl font-bold text-lg">
               List your shortlet
             </Button>

@@ -1,6 +1,8 @@
 import * as z from "zod"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import type { FieldValues, Path, UseFormSetError } from "react-hook-form"
+import { toast } from "sonner"
 
 export const protocol =
   process.env.NODE_ENV === 'production' ? 'https' : 'http';
@@ -62,3 +64,29 @@ export const formatNaira = (amount: number): string => {
     maximumFractionDigits: 0,
   }).format(amount);
 };
+// Shows an API failure on the form: field errors go under their inputs, anything else becomes a toast
+export function applyServerErrors<T extends FieldValues>(
+  setError: UseFormSetError<T>,
+  fields: readonly Path<T>[],
+  error: { message: string; errors?: Record<string, string[]> },
+) {
+  let shown = false;
+  for (const [key, messages] of Object.entries(error.errors ?? {})) {
+    if (fields.includes(key as Path<T>) && messages?.[0]) {
+      setError(key as Path<T>, { type: "server", message: messages[0] });
+      shown = true;
+    }
+  }
+  if (!shown) toast.error(error.message);
+}
+
+// "ada obi" -> "Ada Obi" (the backend lowercases full names)
+export const titleCase = (value: string) => value.replace(/\b\p{L}/gu, (c) => c.toUpperCase());
+
+// The user's name if we have one; empty when they haven't given it
+export const userName = (user: { fullname?: string; name?: string; firstName?: string; lastName?: string }) =>
+  titleCase(user.fullname?.trim() || user.name || [user.firstName, user.lastName].filter(Boolean).join(" "));
+
+// Best available label for a user: their name, or the email as a last resort
+export const displayName = (user: { fullname?: string; name?: string; firstName?: string; lastName?: string; email?: string }) =>
+  userName(user) || user.email || "";

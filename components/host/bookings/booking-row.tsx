@@ -12,7 +12,7 @@ export default function BookingRow({ booking }: { booking: HostBooking }) {
   const amount = status === "cancelled" ? 0 : getBookingAmounts(booking).total;
 
   return (
-    <Link href={`/host/bookings/${booking.ref}`} className="flex gap-3 py-5 first:pt-0 last:pb-0 hover:opacity-80">
+    <Link href={`/host/bookings/${booking.id ?? booking.ref}`} className="flex gap-3 py-5 first:pt-0 last:pb-0 hover:opacity-80">
       <Avatar className="size-10 md:size-11">
         <AvatarImage src={renter.avatar} alt={renter.name} />
         <AvatarFallback>{renter.name[0]}</AvatarFallback>

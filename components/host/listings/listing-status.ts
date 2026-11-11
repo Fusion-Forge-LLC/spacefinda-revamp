@@ -5,4 +5,5 @@ export const LISTING_STATUS: Record<HostListingStatus, { label: string; classNam
   paused: { label: "Paused", className: "bg-red-50 text-red-600", accent: "bg-primary" },
   review: { label: "Under review", className: "bg-amber-50 text-[#9A7B3F]", accent: "bg-[#9A7B3F]" },
   draft: { label: "Draft", className: "bg-text-Grey-Muted text-Text-body-text", accent: "bg-Text-body-text" },
+  suspended: { label: "Suspended", className: "bg-red-50 text-red-600", accent: "bg-red-600" },
 };

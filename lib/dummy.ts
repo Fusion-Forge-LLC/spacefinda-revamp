@@ -293,9 +293,11 @@ export const DUMMY_HOST_STATS = {
 export type HostBookingStatus = "upcoming" | "active" | "completed" | "cancelled";
 
 export interface HostBooking {
+  // API bookings link by id; dummy ones by ref
+  id?: string;
   ref: string;
   status: HostBookingStatus;
-  renter: { name: string; avatar: string; completedStays: number; rating: number };
+  renter: { name: string; avatar: string; completedStays: number; rating?: number };
   listingTitle: string;
   propertyName: string;
   location: string;
@@ -432,7 +434,7 @@ export const DUMMY_HOST_BOOKINGS: HostBooking[] = [
   },
 ];
 
-export type HostListingStatus = "live" | "paused" | "review" | "draft";
+export type HostListingStatus = "live" | "paused" | "review" | "draft" | "suspended";
 
 export interface HostListing {
   id: string;

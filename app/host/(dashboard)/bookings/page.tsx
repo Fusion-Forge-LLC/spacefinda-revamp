@@ -4,7 +4,9 @@ import BookingRow from '@/components/host/bookings/booking-row'
 import { BOOKING_STATUS, BOOKING_TABS } from '@/components/host/bookings/booking-status'
 import EmptyState from '@/components/host/empty-state'
 import LinkTabs from '@/components/host/link-tabs'
-import { DUMMY_HOST, DUMMY_HOST_BOOKINGS, HostBookingStatus } from '@/lib/dummy'
+import type { HostBookingStatus } from '@/lib/dummy'
+import { getHostBookings } from '@/lib/host/api'
+import { toHostBooking } from '@/lib/host/mappers'
 
 // Empty state per tab. Upcoming keeps the "no bookings yet" copy from the design while the listing isn't live
 const EMPTY_STATES: Record<HostBookingStatus, { icon: typeof CalendarDays; title: string; description: string }> = {
@@ -34,7 +36,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
   const { tab } = await searchParams
   const active: HostBookingStatus = BOOKING_TABS.includes(tab as HostBookingStatus) ? (tab as HostBookingStatus) : 'upcoming'
 
-  const bookings = DUMMY_HOST_BOOKINGS
+  // One page of up to 50 (the API max), split into tabs by each booking's stage
+  const now = new Date()
+  const bookings = (await getHostBookings({ limit: 50 })).map((b) => toHostBooking(b, now))
   const visible = bookings.filter((b) => b.status === active)
 
   return (
@@ -57,7 +61,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
             icon={CalendarDays}
             className='py-16'
             title='No bookings yet'
-            description={`Once your ${DUMMY_HOST.setup.listingTitle} listing goes live, bookings from renters across Ibadan will appear here. You'll receive instant notifications for every new booking.`}
+            description="Once your listing goes live, bookings from renters across Ibadan will appear here. You'll receive instant notifications for every new booking."
             action={{ label: 'Complete your listings', href: '/host/create-listing' }}
           />
         ) : (
@@ -66,7 +70,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
       ) : (
         <div className='divide-y divide-gray-100 rounded-2xl border border-gray-100 bg-white p-4 md:p-6'>
           {visible.map((booking) => (
-            <BookingRow key={booking.ref} booking={booking} />
+            <BookingRow key={booking.id ?? booking.ref} booking={booking} />
           ))}
         </div>
       )}

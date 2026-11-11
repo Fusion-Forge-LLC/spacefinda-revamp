@@ -8,12 +8,9 @@ import { Button } from '../ui/button';
 import { ArrowLeft, Export, ExportCircle, ExportCurve } from 'iconsax-reactjs';
 import { Heart } from 'lucide-react';
 import Link from 'next/link';
-import { sampleImages } from '@/content/site';
 import ShareDialog from '../ui/modal/dialog-share';
 
-const images = sampleImages;
-
-function PropertyGallery() {
+function PropertyGallery({ images, title, id }: { images: string[]; title: string; id: string }) {
   if (!images || images.length === 0) return null;
 
   const count = images.length;
@@ -33,8 +30,8 @@ function PropertyGallery() {
                         </button>
                     }
                     imageSrc={images[0]} 
-                    title='Cozy 2BR Apartment in Ibadan' 
-                    slug='cozy-2br-apartment-in-ibadan' 
+                    title={title} 
+                    slug={id} 
                 />
                 <button className='h-7 w-7 rounded-full bg-white grid place-content-center'>
                     <Heart color='#111' size={14} />
@@ -42,9 +39,10 @@ function PropertyGallery() {
             </div>
             {/* {mobile navigation} */}
             <div className={cn("overflow-hidden", count === 1 ? "col-span-3 h-full md:rounded-xl" : "col-span-2 h-full md:rounded-l-xl")}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     src={images[0]}
-                    alt="Photo 1"
+                    alt={`${title}, photo 1`}
                     className="w-full h-full object-cover"
                 />
             </div>
@@ -71,7 +69,7 @@ function PropertyGallery() {
                             className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-primary hover:bg-blue-700 text-white text-sm font-medium shadow"
                         >
                             <span>Show all photos</span>
-                            <span className="text-xs opacity-80">+{count - 3}</span>
+                            {count > 3 && <span className="text-xs opacity-80">+{count - 3}</span>}
                         </Button>
                     )}
                 </div>

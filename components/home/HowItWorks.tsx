@@ -25,7 +25,7 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section className="py-24 bg-white">
+    <section id="how-it-works" className="py-24 bg-white scroll-mt-20">
       <Wrapper className="px-4">
         <div className="max-w-xl mb-16">
           <h2 className="text-4xl font-bricolage font-bold text-[#333333] mb-4">How SpaceFinda works</h2>

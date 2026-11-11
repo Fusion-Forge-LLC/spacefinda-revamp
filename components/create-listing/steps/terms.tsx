@@ -33,7 +33,7 @@ function Note({ children }: { children: React.ReactNode }) {
 
 const Strong = ({ children }: { children: React.ReactNode }) => <span className="font-medium text-Text-dark">{children}</span>;
 
-export default function TermsStep({ onAgree }: { onAgree: () => void }) {
+export default function TermsStep({ onAgree, pending = false }: { onAgree: () => void; pending?: boolean }) {
   const endRef = useRef<HTMLDivElement>(null);
   const [hasReadAll, setHasReadAll] = useState(false);
 
@@ -150,10 +150,10 @@ export default function TermsStep({ onAgree }: { onAgree: () => void }) {
           </p>
           <Button
             onClick={onAgree}
-            disabled={!hasReadAll}
+            disabled={!hasReadAll || pending}
             className="h-11 px-4 md:px-6 text-base disabled:opacity-100 disabled:bg-[#A6BDF9] disabled:text-white"
           >
-            I understand, let&apos;s go
+            {pending ? "Just a moment..." : <>I understand, let&apos;s go</>}
           </Button>
         </Wrapper>
       </footer>

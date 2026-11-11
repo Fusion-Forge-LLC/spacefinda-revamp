@@ -2,11 +2,13 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Pause, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import type { HostListing } from "@/lib/dummy";
+import { deleteListing, togglePauseListing, withdrawListing } from "@/lib/host/actions";
 import ConfirmModal from "../confirm-modal";
 import ListingCard, { ListingAction } from "./listing-card";
 import ManageAvailabilityModal from "./manage-availability-modal";
@@ -42,6 +44,14 @@ const CONFIRM = {
   },
 };
 
+// Runs a listing action and reports the outcome; returns whether it worked
+async function run(action: Promise<{ ok: boolean; message?: string }>, success: string) {
+  const res = await action;
+  if (res.ok) toast(success);
+  else toast.error(res.message ?? "Something went wrong. Please try again.");
+  return res.ok;
+}
+
 function ListingsSummary({ listings }: { listings: HostListing[] }) {
   const count = (status: HostListing["status"]) => listings.filter((l) => l.status === status).length;
   const live = count("live") + count("paused");
@@ -70,8 +80,8 @@ export function ListingsHeader({ children }: { children: React.ReactNode }) {
   );
 }
 
-// No API yet, so pause / withdraw / delete only change local state
 export default function ListingsManager({ initialListings }: { initialListings: HostListing[] }) {
+  const router = useRouter();
   const [listings, setListings] = useState(initialListings);
   const [pending, setPending] = useState<Pending>(null);
   const [availabilityFor, setAvailabilityFor] = useState<HostListing | null>(null);
@@ -79,10 +89,12 @@ export default function ListingsManager({ initialListings }: { initialListings: 
   const updateListing = (id: string, patch: Partial<HostListing>) =>
     setListings((prev) => prev.map((l) => (l.id === id ? { ...l, ...patch } : l)));
 
-  const handleAction = (listing: HostListing, action: ListingAction) => {
+  const handleAction = async (listing: HostListing, action: ListingAction) => {
     if (action === "resume") {
-      updateListing(listing.id, { status: "live" });
-      toast(`${listing.title} is live again`);
+      if (await run(togglePauseListing(listing.id), `${listing.title} is live again`)) {
+        updateListing(listing.id, { status: "live" });
+        router.refresh();
+      }
     } else if (action === "availability") {
       setAvailabilityFor(listing);
     } else {
@@ -90,20 +102,20 @@ export default function ListingsManager({ initialListings }: { initialListings: 
     }
   };
 
-  const confirm = () => {
+  const confirm = async () => {
     if (!pending) return;
     const { action, listing } = pending;
     if (action === "pause") {
-      updateListing(listing.id, { status: "paused" });
-      toast(`${listing.title} paused`);
+      if (await run(togglePauseListing(listing.id), `${listing.title} paused`)) updateListing(listing.id, { status: "paused" });
     } else if (action === "withdraw") {
       // A withdrawn listing goes back to being a draft so it can be edited and resubmitted
-      updateListing(listing.id, { status: "draft", draft: { lastEdited: "today", step: 10, totalSteps: 10, stepName: "Review" } });
-      toast("Listing withdrawn from review");
+      if (await run(withdrawListing(listing.id), "Listing withdrawn from review")) {
+        updateListing(listing.id, { status: "draft", draft: { lastEdited: "today", step: 10, totalSteps: 10, stepName: "Review" } });
+      }
     } else if (action === "delete") {
-      setListings((prev) => prev.filter((l) => l.id !== listing.id));
-      toast("Draft deleted");
+      if (await run(deleteListing(listing.id), "Draft deleted")) setListings((prev) => prev.filter((l) => l.id !== listing.id));
     }
+    router.refresh();
   };
 
   const config = pending ? CONFIRM[pending.action] : null;

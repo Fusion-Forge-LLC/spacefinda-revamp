@@ -1,3 +1,6 @@
+"use client";
+
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +13,7 @@ interface PropertyCardProps {
   image: string;
   title: string;
   location: string;
-  amenities: { icon: string; label: string }[];
+  amenities?: { icon: string; label: string }[];
   price: string;
   rating: number;
   reviews: number;
@@ -22,7 +25,7 @@ export default function PropertyCard({
   image,
   title,
   location,
-  amenities,
+  amenities = [],
   price,
   rating,
   reviews,
@@ -38,7 +41,11 @@ export default function PropertyCard({
         thumbnail={image}
       />
       <div className="relative aspect-308/160 rounded-t-lg overflow-hidden mb-4">
-        <Image src={image} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+        {image ? (
+          <Image src={image} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+        ) : (
+          <div className="size-full bg-[#F2F2F2]" />
+        )}
         
         {isVerified && (
           <div className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
@@ -56,19 +63,19 @@ export default function PropertyCard({
       </div>
       
       <div className="space-y-2">
-        <Link className="hover:underline hover:bg-primary" href={`/listings/${title.toLowerCase().replace(/\s+/g, "-")}`}>
+        <Link className="hover:underline hover:bg-primary" href={`/listings/${id}`}>
           <h3 className="font-semibold text-lg text-[#333333] truncate">{title}</h3>
         </Link>
         <p className="text-sm text-[#666666] truncate">{location}</p>
         
-        <div className="flex items-center gap-4 py-1">
+        {amenities.length > 0 && <div className="flex items-center gap-4 py-1">
           {amenities.map((item, i) => (
             <div key={i} className="flex items-center gap-1.5">
               <Image src={item.icon} alt={item.label} width={16} height={16} className="opacity-60" />
               <span className="text-xs text-[#666666]">{item.label}</span>
             </div>
           ))}
-        </div>
+        </div>}
         
         <div className="flex items-center justify-between pt-2 border-t border-gray-100">
           <div className="flex items-center gap-1 text-[#333333]">
@@ -82,8 +89,8 @@ export default function PropertyCard({
             >
               <Star1 size={12} variant="TwoTone" className="fill-current" />
             </div>
-            <span className="font-semibold text-sm">{rating}</span>
-            <span className="text-xs md:text-[10px] lg:text-xs text-[#666666]">({reviews} reviews)</span>
+            <span className="font-semibold text-sm">{reviews ? rating.toFixed(1) : "New"}</span>
+            {reviews > 0 && <span className="text-xs md:text-[10px] lg:text-xs text-[#666666]">({reviews} reviews)</span>}
           </div>
         </div>
       </div>

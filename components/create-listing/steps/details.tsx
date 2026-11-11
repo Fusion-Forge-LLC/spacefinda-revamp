@@ -6,7 +6,10 @@ import StepHeading from "../step-heading";
 import CharCount from "../char-count";
 import { StepProps } from "../types";
 
+// The API rejects titles under 10 characters and descriptions under 50
+export const TITLE_MIN = 10;
 export const TITLE_MAX = 50;
+export const DESCRIPTION_MIN = 50;
 export const DESCRIPTION_MAX = 800;
 
 export default function DetailsStep({ draft, update }: StepProps) {
@@ -32,7 +35,9 @@ export default function DetailsStep({ draft, update }: StepProps) {
             placeholder="e.g. Cosy 2 bedroom apartment, Bodija"
             className="h-11 border-light-Grey"
           />
-          <p className="text-xs text-Grey-Pure-White">Include the property type and neighbourhood. Clear titles get more clicks.</p>
+          <p className="text-xs text-Grey-Pure-White">
+            Include the property type and neighbourhood. Clear titles get more clicks. At least {TITLE_MIN} characters.
+          </p>
         </div>
 
         <div className="space-y-2">
@@ -50,6 +55,7 @@ export default function DetailsStep({ draft, update }: StepProps) {
             placeholder="Describe what makes your space special, what is nearby or what guests should know before booking"
             className="min-h-30 border-light-Grey shadow-none placeholder:text-Grey-Pure-White focus-visible:ring-0 focus-visible:border-primary"
           />
+          <p className="text-xs text-Grey-Pure-White">At least {DESCRIPTION_MIN} characters.</p>
         </div>
       </div>
     </>

@@ -7,12 +7,17 @@ import BankAccountCard from '@/components/host/payout/bank-account-card'
 import ExportButton from '@/components/host/payout/export-button'
 import PayoutHistory from '@/components/host/payout/payout-history'
 import PayoutTable from '@/components/host/payout/payout-table'
-import { DUMMY_HOST, DUMMY_HOST_PAYOUTS, DUMMY_HOST_STATS, DUMMY_PAYOUT_SUMMARY } from '@/lib/dummy'
+import { DUMMY_HOST_PAYOUTS, DUMMY_HOST_STATS, DUMMY_PAYOUT_SUMMARY, HostBank } from '@/lib/dummy'
+import { getBanks, getPayoutMethods } from '@/lib/payout/api'
 import { cn, formatNaira } from '@/lib/utils'
 
-export default function Page() {
-  const { bank } = DUMMY_HOST
+export default async function Page() {
+  const methods = await getPayoutMethods()
+  // The most recently added account is the one payouts go to
+  const method = methods.at(-1)
+  const bank: HostBank | undefined = method && { accountName: method.account_name, bankName: method.bank_name, last4: method.account_number.slice(-4) }
   const hasBank = !!bank
+  const banks = hasBank ? [] : await getBanks()
   const payouts = DUMMY_HOST_PAYOUTS
   const upcoming = payouts.filter((p) => p.status === 'upcoming')
   const paid = payouts.filter((p) => p.status === 'paid')
@@ -32,11 +37,11 @@ export default function Page() {
         {paid.length > 0 && <ExportButton payouts={paid} />}
       </div>
 
-      {!hasBank && <AddBankForm />}
+      {!hasBank && <AddBankForm banks={banks} />}
 
       {payouts.length === 0 ? (
         <>
-          {hasBank && <BankAccountCard bank={bank} />}
+          {bank && <BankAccountCard bank={bank} />}
           <EmptyState
             icon={CreditCard}
             title='No earnings yet'
@@ -75,7 +80,7 @@ export default function Page() {
             </SectionCard>
           )}
 
-          {hasBank && <BankAccountCard bank={bank} />}
+          {bank && <BankAccountCard bank={bank} />}
           <PayoutHistory payouts={paid} />
         </>
       )}

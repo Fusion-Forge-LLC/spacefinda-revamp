@@ -48,12 +48,16 @@ function RenterInfo({ booking }: { booking: HostBooking }) {
           <p className="text-sm md:text-base font-medium text-Text-dark">{renter.name}</p>
           <p className="mt-0.5 flex flex-wrap items-center gap-x-1 text-xs md:text-sm text-Text-body-text">
             <span>Verified account · {renter.completedStays} completed stays</span>
-            <span className="max-md:hidden">·</span>
-            {/* The rating gets its own line on mobile so the separator never dangles */}
-            <span className="flex items-center gap-1 max-md:basis-full">
-              <Star className="size-3.5 fill-amber-400 text-amber-400" />
-              {renter.rating.toFixed(1)} from hosts
-            </span>
+            {renter.rating !== undefined && (
+              <>
+                <span className="max-md:hidden">·</span>
+                {/* The rating gets its own line on mobile so the separator never dangles */}
+                <span className="flex items-center gap-1 max-md:basis-full">
+                  <Star className="size-3.5 fill-amber-400 text-amber-400" />
+                  {renter.rating.toFixed(1)} from hosts
+                </span>
+              </>
+            )}
           </p>
         </div>
         {canMessage && (
@@ -179,8 +183,8 @@ function EarningsBreakdown({ booking }: { booking: HostBooking }) {
       </div>
       {isPaid ? (
         <Note tone="green" icon={CircleCheck}>
-          {formatNaira(payout)} released to your {booking.payout.bank} account on check-in day, {booking.payout.date} · Paystack reference:{" "}
-          {booking.payout.reference}
+          {formatNaira(payout)} released to your {booking.payout.bank} account on check-in day, {booking.payout.date}
+          {booking.payout.reference && <> · Paystack reference: {booking.payout.reference}</>}
         </Note>
       ) : (
         <Note tone="blue" icon={Clock}>

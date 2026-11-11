@@ -3,14 +3,12 @@ import Link from "next/link";
 import { CalendarDays } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatNaira } from "@/lib/utils";
-import { DUMMY_HOST_BOOKINGS } from "@/lib/dummy";
+import type { HostBooking } from "@/lib/dummy";
 import SectionCard from "../section-card";
 import EmptyState from "../empty-state";
 import { getBookingAmounts } from "../bookings/booking-utils";
 
-export default function UpcomingCheckins({ empty = false }: { empty?: boolean }) {
-  const bookings = empty ? [] : DUMMY_HOST_BOOKINGS.filter((b) => b.status === "upcoming");
-
+export default function UpcomingCheckins({ bookings = [] }: { bookings?: HostBooking[] }) {
   return (
     <SectionCard
       title="Upcoming check-ins"
@@ -31,8 +29,8 @@ export default function UpcomingCheckins({ empty = false }: { empty?: boolean })
       ) : (
         <ul className="divide-y divide-gray-100">
           {bookings.map((b) => (
-            <li key={b.ref}>
-              <Link href={`/host/bookings/${b.ref}`} className="flex gap-3 py-4 hover:opacity-80">
+            <li key={b.id ?? b.ref}>
+              <Link href={`/host/bookings/${b.id ?? b.ref}`} className="flex gap-3 py-4 hover:opacity-80">
                 <Avatar className="size-10 md:size-11">
                   <AvatarImage src={b.renter.avatar} alt={b.renter.name} />
                   <AvatarFallback>{b.renter.name[0]}</AvatarFallback>
@@ -47,7 +45,7 @@ export default function UpcomingCheckins({ empty = false }: { empty?: boolean })
                 <div className="flex flex-col items-end gap-2">
                   <p className="text-sm md:text-base font-medium text-Text-dark">{formatNaira(getBookingAmounts(b).total)}</p>
                   <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs text-green-600">
-                    Check-in {b.checkIn.split(" ")[0]}
+                    {b.statusNote}
                   </span>
                 </div>
               </Link>

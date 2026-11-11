@@ -1,10 +1,11 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarDays, Clock, Eye, MapPin, Pause, Play, SquarePen, Star, X } from "lucide-react";
+import { CalendarDays, Clock, Eye, ImageIcon, MapPin, Pause, Play, SquarePen, Star, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn, formatNaira } from "@/lib/utils";
 import type { HostListing } from "@/lib/dummy";
+import { draftHref } from "@/lib/host/mappers";
 import { LISTING_STATUS } from "./listing-status";
 
 export type ListingAction = "pause" | "resume" | "availability" | "withdraw" | "delete";
@@ -49,7 +50,13 @@ export default function ListingCard({ listing, onAction }: { listing: HostListin
     <article className="relative flex flex-col gap-4 overflow-hidden rounded-r-2xl border border-l-0 border-gray-100 bg-white p-4 pl-5 md:flex-row md:p-5 md:pl-6">
       <span className={cn("absolute inset-y-0 left-0 w-1", status.accent)} />
 
-      <Image src={listing.image} alt="" width={130} height={100} className="h-40 w-full shrink-0 rounded-lg object-cover md:h-25 md:w-32.5" />
+      {listing.image ? (
+        <Image src={listing.image} alt="" width={130} height={100} className="h-40 w-full shrink-0 rounded-lg object-cover md:h-25 md:w-32.5" />
+      ) : (
+        <div className="flex h-40 w-full shrink-0 items-center justify-center rounded-lg bg-text-Grey-Muted text-Text-body-text md:h-25 md:w-32.5">
+          <ImageIcon className="size-6" strokeWidth={1.25} />
+        </div>
+      )}
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
@@ -61,7 +68,7 @@ export default function ListingCard({ listing, onAction }: { listing: HostListin
         </div>
         <p className="mt-1.5 flex items-center gap-1 text-xs md:text-sm text-Text-body-text">
           <MapPin className="size-3.5" />
-          {listing.location} · {listing.beds} beds · {listing.guests} guests
+          {[listing.location, listing.beds && `${listing.beds} beds`, listing.guests && `${listing.guests} guests`].filter(Boolean).join(" · ")}
         </p>
 
         {isPublished && listing.stats && (
@@ -97,9 +104,11 @@ export default function ListingCard({ listing, onAction }: { listing: HostListin
       </div>
 
       <div className="flex shrink-0 flex-row-reverse items-center justify-between gap-3 md:flex-col md:items-end md:justify-start">
-        <p className="text-base md:text-lg font-medium text-Text-dark">
-          {formatNaira(listing.pricePerNight)} <span className="text-xs font-normal text-Text-body-text">/ night</span>
-        </p>
+        {listing.pricePerNight > 0 && (
+          <p className="text-base md:text-lg font-medium text-Text-dark">
+            {formatNaira(listing.pricePerNight)} <span className="text-xs font-normal text-Text-body-text">/ night</span>
+          </p>
+        )}
         <div className="flex gap-2">
           {isPublished && (
             <>
@@ -121,7 +130,7 @@ export default function ListingCard({ listing, onAction }: { listing: HostListin
           )}
           {listing.status === "draft" && (
             <>
-              <IconAction label="Continue setup" icon={Play} href="/host/create-listing" />
+              <IconAction label="Continue setup" icon={Play} href={draftHref(listing.id)} />
               <IconAction label="Delete draft" icon={X} onClick={() => onAction("delete")} />
             </>
           )}

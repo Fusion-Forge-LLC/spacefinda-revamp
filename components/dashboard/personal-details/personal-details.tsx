@@ -3,19 +3,28 @@ import PageHeading from "../page-heading";
 import InfoRow from "./info-row";
 import GovernmentIdentity from "./government-identity";
 import { DUMMY_USER } from "@/lib/dummy";
+import { getCurrentUser } from "@/lib/auth/session";
+import { userName } from "@/lib/utils";
 
-const SECTIONS = [
+const sectionsFor = (user: { name: string; email: string; phone: string }) => [
   {
     title: "Your name",
     description: "Hosts receive your first name only until a booking is confirmed.",
-    rows: [{ label: "Name", placeholder: "Let us know what to call you", defaultValue: DUMMY_USER.name }],
+    rows: [{ label: "Name", placeholder: "Let us know what to call you", defaultValue: user.name, field: "fullname" as const }],
   },
   {
     title: "Contact details",
     description: "Changing your email or phone number requires a verification code to confirm the change.",
     rows: [
-      { label: "Email address", placeholder: "you@example.com", type: "email", defaultValue: DUMMY_USER.email },
-      { label: "Phone number", placeholder: "+234 xxx xxx xxxx", type: "tel", defaultValue: DUMMY_USER.phone },
+      {
+        label: "Email address",
+        placeholder: "you@example.com",
+        type: "email",
+        defaultValue: user.email,
+        readOnly: true,
+        note: "To change your email, contact support@spacefinda.com.",
+      },
+      { label: "Phone number", placeholder: "+234 xxx xxx xxxx", type: "tel", defaultValue: user.phone, field: "phone" as const },
     ],
   },
   {
@@ -29,7 +38,9 @@ const SECTIONS = [
   },
 ];
 
-export default function PersonalDetails() {
+export default async function PersonalDetails() {
+  const user = await getCurrentUser();
+  const SECTIONS = sectionsFor({ name: user ? userName(user) : "", email: user?.email ?? "", phone: user?.phone ?? "" });
   return (
     <div className="max-w-192">
       <PageHeading

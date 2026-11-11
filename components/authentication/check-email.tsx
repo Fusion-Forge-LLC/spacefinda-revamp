@@ -2,11 +2,13 @@ import ModalWrapper from '../ui/modal/dialog-wrapper'
 import { Email } from '../icons/icons'
 import { Button } from '../ui/button'
 import { AuthModal } from '@/@types/types'
+import { maskEmail } from '@/lib/utils'
 
 function CheckEmail({
     isOpen, 
     setStep,
-    setIsModalOpen
+    setIsModalOpen,
+    flow,
 }: AuthModal) {
 
     return (
@@ -20,14 +22,14 @@ function CheckEmail({
             
                 <div className='py-4'>
                     <h3 className="text-Text-dark text-2xl font-bold" >Check your email</h3>
-                    <p className="text-Text-body-text font-['Geist'] leading-6">We've sent a link to reset your password.</p>
+                    <p className="text-Text-body-text font-['Geist'] leading-6">We&apos;ve sent a 6-digit code to {maskEmail(flow.email)}. Use it to reset your password.</p>
                 </div>
                     
                 <div className='flex flex-col gap-1'>
-                    <Button onClick={() => setStep("verify-email")} size={"lg"} type="submit" className=" py-3 px-4 mt-3">
+                    <Button onClick={() => setStep("verify-email")} size={"lg"} type="button" className=" py-3 px-4 mt-3">
                         Continue
                     </Button>
-                    <Button variant={"link"} size={"lg"} type="submit" onClick={() => setStep("signIn")} className=" py-3 px-4 mt-3">
+                    <Button variant={"link"} size={"lg"} type="button" onClick={() => setStep("signIn")} className=" py-3 px-4 mt-3">
                         Back to Sign In
                     </Button>
                 </div>

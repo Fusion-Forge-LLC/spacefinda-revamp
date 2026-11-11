@@ -13,11 +13,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer/drawer";
-import { DUMMY_HOST } from "@/lib/dummy";
+import { useAuth } from "@/components/authentication/auth-provider";
+import { displayName } from "@/lib/utils";
 import HostSidebar from "./sidebar";
 import NotificationsPopover from "./notifications-popover";
 
 export default function HostTopbar() {
+  const { user } = useAuth();
+  const name = user ? displayName(user) : "";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -40,8 +43,8 @@ export default function HostTopbar() {
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-1 rounded-full border border-gray-100 p-1 pr-2 outline-none">
             <Avatar className="size-6 md:size-7">
-              <AvatarImage src={DUMMY_HOST.avatar} alt={DUMMY_HOST.name} />
-              <AvatarFallback>{DUMMY_HOST.name[0]}</AvatarFallback>
+              {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt={name} />}
+              <AvatarFallback>{name.charAt(0).toUpperCase() || "?"}</AvatarFallback>
             </Avatar>
             <ChevronDown className="size-4 text-Text-body-text" />
           </DropdownMenuTrigger>

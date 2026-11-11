@@ -32,7 +32,7 @@ const SECTIONS = [
 ]
 
 export default async function Page() {
-  const { hasLiveListing, isVerified } = await getHostStage()
+  const { hasLiveListing, isVerified } = await getHostStage(DUMMY_HOST.stage)
   const stats = [
     { label: 'Listing', value: hasLiveListing ? DUMMY_HOST_STATS.listingCount : 0 },
     { label: 'Bookings', value: hasLiveListing ? DUMMY_HOST_STATS.totalBookings : 0 },

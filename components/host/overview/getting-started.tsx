@@ -4,15 +4,23 @@ import { CreditCard, House, ImageIcon, MessageSquareMore, Tag, TriangleAlert } f
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import { DUMMY_HOST } from "@/lib/dummy";
 import SectionCard from "../section-card";
 
 // Overview pieces shown to a host whose first listing isn't live yet
 
-const { listingTitle, stepsComplete, totalSteps } = DUMMY_HOST.setup;
-const setupPercent = Math.round((stepsComplete / totalSteps) * 100);
+// The host's most recent unfinished draft
+export interface DraftProgress {
+  listingTitle: string;
+  stepsComplete: number;
+  totalSteps: number;
+  href: string;
+}
 
-export function ListingProgressBanner() {
+const percent = ({ stepsComplete, totalSteps }: DraftProgress) => Math.round((stepsComplete / totalSteps) * 100);
+
+export function ListingProgressBanner({ progress }: { progress: DraftProgress }) {
+  const { listingTitle, stepsComplete, totalSteps, href } = progress;
+  const setupPercent = percent(progress);
   return (
     <div className="rounded-2xl bg-navy p-4 md:p-5 text-white">
       <div className="flex items-start gap-3">
@@ -36,21 +44,24 @@ export function ListingProgressBanner() {
       <Progress value={setupPercent} className="mt-2 h-1.5 bg-white/15 *:data-[slot=progress-indicator]:bg-primary" />
 
       <Button asChild className="mt-5 h-10 rounded-lg px-5">
-        <Link href="/host/create-listing">Continue setup</Link>
+        <Link href={href}>Continue setup</Link>
       </Button>
     </div>
   );
 }
 
-const SETUP_TASKS = [
-  {
-    key: "listing",
-    icon: House,
-    tone: "bg-primary-containers text-primary",
-    title: "Complete your listing",
-    description: `${listingTitle} is ${setupPercent}% complete. Finish the remaining steps to start receiving bookings from renters in Ibadan.`,
-    action: { label: "Continue setup", href: "/host/create-listing" },
-  },
+const listingTask = (progress?: DraftProgress) => ({
+  key: "listing",
+  icon: House,
+  tone: "bg-primary-containers text-primary",
+  title: progress ? "Complete your listing" : "Create your first listing",
+  description: progress
+    ? `${progress.listingTitle} is ${percent(progress)}% complete. Finish the remaining steps to start receiving bookings from renters in Ibadan.`
+    : "List your space in a few minutes to start receiving bookings from renters in Ibadan.",
+  action: { label: progress ? "Continue setup" : "List your space", href: progress?.href ?? "/host/create-listing" },
+});
+
+const OTHER_TASKS = [
   {
     key: "verify",
     icon: TriangleAlert,
@@ -70,9 +81,19 @@ const SETUP_TASKS = [
 ];
 
 // The listing card is left out once the progress banner is showing
-export function SetupTasks({ includeListing, isVerified, hasBank }: { includeListing: boolean; isVerified: boolean; hasBank: boolean }) {
+export function SetupTasks({
+  includeListing,
+  isVerified,
+  hasBank,
+  progress,
+}: {
+  includeListing: boolean;
+  isVerified: boolean;
+  hasBank: boolean;
+  progress?: DraftProgress;
+}) {
   const done = { listing: !includeListing, verify: isVerified, bank: hasBank };
-  const tasks = SETUP_TASKS.filter((t) => !done[t.key as keyof typeof done]);
+  const tasks = [listingTask(progress), ...OTHER_TASKS].filter((t) => !done[t.key as keyof typeof done]);
   if (tasks.length === 0) return null;
 
   return (

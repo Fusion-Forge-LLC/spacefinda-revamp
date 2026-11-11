@@ -1,26 +1,26 @@
 import { formatNaira } from '@/lib/utils'
-import Link from 'next/link'
 import React from 'react'
 import { MobileDrawer } from '../ui/drawer/mobile-drawer';
 import { Button } from '../ui/button';
 import CheckInComponent from './check-in-component';
+import type { ApiApartment } from '@/lib/api/types';
 
-const amount = 120000;
-
-function BookingMobile() {
+function BookingMobile({ apartment }: { apartment: ApiApartment }) {
     return (
         <div className='md:hidden'>
             <p className='text-Body-Text text-center pb-6 border-b border-b-grey-200'>
-                Something feels off? <Link href='/report-lsting' className='text-primary underline'>Report this listings</Link>
+                Something feels off? <a href={`mailto:support@spacefinda.com?subject=${encodeURIComponent(`Report listing ${apartment._id}`)}`} className='text-primary underline'>Report this listing</a>
             </p>
             <div className='space-y-2 px-4 pt-6'>
                 <h4 className='text-Text-dark text-xl font-["Inter"]'>
-                    <span className="font-semibold">{formatNaira(amount)} /</span>
+                    <span className="font-semibold">{formatNaira(apartment.pricePerNight ?? 0)} /</span>
                     <span className="text-Text-body-text text-base font-normal font-['Geist'] leading-6">{" "}night</span>
                 </h4>
-                <p className="justify-start text-Text-body-text text-base font-normal font-['Geist'] leading-6">
-                    Refundable caution fee of ₦10,000 applies
-                </p>
+                {!!apartment.cautionFee && (
+                    <p className="justify-start text-Text-body-text text-base font-normal font-['Geist'] leading-6">
+                        Refundable caution fee of {formatNaira(apartment.cautionFee)} applies
+                    </p>
+                )}
 
                 <MobileDrawer 
                     title='Reserve your stay'
@@ -32,7 +32,7 @@ function BookingMobile() {
                 >
                     <div className='space-y-2'>
                         <span>Your dates</span>
-                        <CheckInComponent />
+                        <CheckInComponent apartment={apartment} />
                     </div>
                 </MobileDrawer>
             </div>

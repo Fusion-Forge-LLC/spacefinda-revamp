@@ -6,7 +6,9 @@ import { MapPin, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { DUMMY_HOST } from "@/lib/dummy";
+import type { HostListing } from "@/lib/dummy";
+import { deleteListing } from "@/lib/host/actions";
+import { draftHref } from "@/lib/host/mappers";
 import ConfirmModal from "../confirm-modal";
 import EmptyState from "../empty-state";
 
@@ -17,13 +19,12 @@ const BENEFITS = [
   { value: "188k", label: "First booking with instant booking enabled vs manual approval" },
 ];
 
-// My listings for a host whose only listing is an unfinished draft
-export default function DraftSetup() {
-  const { draftTitle, listingTitle, location, stepsComplete, totalSteps } = DUMMY_HOST.setup;
+// My listings for a host whose only listing is an unfinished draft (or who has none yet)
+export default function DraftSetup({ draft }: { draft?: HostListing }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deleted, setDeleted] = useState(false);
 
-  if (deleted) {
+  if (!draft || deleted) {
     return (
       <EmptyState
         icon={MapPin}
@@ -35,6 +36,12 @@ export default function DraftSetup() {
     );
   }
 
+  const draftTitle = draft.title;
+  const listingTitle = draft.title;
+  const totalSteps = draft.draft?.totalSteps ?? 10;
+  // Steps before the one the host stopped at are done
+  const stepsComplete = Math.max((draft.draft?.step ?? 1) - 1, 0);
+
   return (
     <div className="flex flex-col gap-6">
       <section className="rounded-2xl border border-gray-100 bg-white p-4 md:p-5">
@@ -44,7 +51,7 @@ export default function DraftSetup() {
         </div>
         <p className="mt-2 flex items-center gap-1 text-xs md:text-sm text-Text-body-text">
           <MapPin className="size-3.5" />
-          {location}
+          {draft.location}
         </p>
 
         <div className="mt-4 flex justify-between text-xs md:text-sm text-Text-body-text">
@@ -57,7 +64,7 @@ export default function DraftSetup() {
 
         <div className="mt-5 flex gap-2">
           <Button asChild className="h-10 rounded-lg px-4">
-            <Link href="/host/create-listing">Continue setup</Link>
+            <Link href={draftHref(draft.id)}>Continue setup</Link>
           </Button>
           <Button variant="ghost" onClick={() => setIsDeleteOpen(true)} className="h-10 rounded-lg bg-text-Grey-Muted px-4">
             Delete draft
@@ -86,7 +93,12 @@ export default function DraftSetup() {
         title="Delete this draft?"
         description={`${draftTitle} and everything you've added to it will be permanently deleted. This can't be undone.`}
         confirmLabel="Yes, delete draft"
-        onConfirm={() => {
+        onConfirm={async () => {
+          const res = await deleteListing(draft.id);
+          if (!res.ok) {
+            toast.error(res.message);
+            return;
+          }
           setDeleted(true);
           toast("Draft deleted");
         }}

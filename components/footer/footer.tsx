@@ -25,8 +25,8 @@ export default function Footer({className}:{className?: string}) {
               <h4 className="font-bold text-white uppercase text-xs tracking-widest">Company</h4>
               <ul className="space-y-4 text-Text-Text-Light text-sm">
                 <li><Link href="/about" className="hover:text-white transition-colors">About</Link></li>
-                <li><Link href="/how-it-works" className="hover:text-white transition-colors">How it works</Link></li>
-                <li><Link href="/safety" className="hover:text-white transition-colors">Trust & Safety</Link></li>
+                <li><Link href="/#how-it-works" className="hover:text-white transition-colors">How it works</Link></li>
+                <li><Link href="/dashboard/legal/payment-security" className="hover:text-white transition-colors">Trust & Safety</Link></li>
               </ul>
             </div>
             
@@ -34,17 +34,17 @@ export default function Footer({className}:{className?: string}) {
               <h4 className="font-bold text-white uppercase text-xs tracking-widest">Resources</h4>
               <ul className="space-y-4 text-Text-Text-Light text-sm">
                 <li><Link href="/listings" className="hover:text-white transition-colors">Browse listings</Link></li>
-                <li><Link href="/help" className="hover:text-white transition-colors">Help centre</Link></li>
-                <li><Link href="/support" className="hover:text-white transition-colors">Contact support</Link></li>
+                <li><Link href="/dashboard/help-support" className="hover:text-white transition-colors">Help centre</Link></li>
+                <li><Link href="/dashboard/help-support" className="hover:text-white transition-colors">Contact support</Link></li>
               </ul>
             </div>
             
             <div className="space-y-6">
               <h4 className="font-bold text-white uppercase text-xs tracking-widest">Legal</h4>
               <ul className="space-y-4 text-Text-Text-Light text-sm">
-                <li><Link href="/list" className="hover:text-white transition-colors">List your space</Link></li>
-                <li><Link href="/guide" className="hover:text-white transition-colors">Owner guide</Link></li>
-                <li><Link href="/payouts" className="hover:text-white transition-colors">Payout info</Link></li>
+                <li><Link href="/host/create-listing" className="hover:text-white transition-colors">List your space</Link></li>
+                <li><Link href="/host/help-support" className="hover:text-white transition-colors">Owner guide</Link></li>
+                <li><Link href="/host/payout" className="hover:text-white transition-colors">Payout info</Link></li>
               </ul>
             </div>
           </div>
@@ -53,8 +53,8 @@ export default function Footer({className}:{className?: string}) {
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 mb-16">
           <p className="text-Text-Text-Light text-sm">© 2025 SpaceFinda. All Rights Reserved.</p>
           <div className="flex items-center gap-8 text-white/40 text-sm">
-            <Link href="/privacy" className="hover:text-white transition-colors">Privacy policy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">Terms of service</Link>
+            <Link href="/dashboard/legal/privacy-policy" className="hover:text-white transition-colors">Privacy policy</Link>
+            <Link href="/dashboard/legal/terms-of-service" className="hover:text-white transition-colors">Terms of service</Link>
           </div>
         </div>
 

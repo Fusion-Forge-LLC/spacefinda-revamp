@@ -190,9 +190,11 @@ export const RECOMMENDED_PHOTOS = 5;
 
 export interface ListingPhoto {
   id: string;
-  // Photos already saved on a listing only have a url
+  // Local preview before upload; photos saved on a listing only have a url
   file?: File;
   url: string;
+  // Set once the photo is on Cloudinary; the API needs it to save the photos step
+  publicId?: string;
 }
 
 export interface ListingDraft {

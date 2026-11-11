@@ -8,8 +8,13 @@ import HowItWorks from "@/components/home/HowItWorks";
 import HostCTA from "@/components/home/HostCTA";
 import HeroHeader from "@/components/home/hero-header";
 import Footer from "@/components/footer/footer";
+import { Toaster } from "sonner";
+import { searchApartments } from "@/lib/apartments/api";
+import { toPropertyCard } from "@/lib/apartments/mappers";
 
-export default function Home() {
+export default async function Home() {
+  const { apartments } = await searchApartments({ limit: 8 });
+
   return (
     <main className="min-h-screen bg-[#FEFEFE]">
       <HeroHeader />
@@ -18,11 +23,13 @@ export default function Home() {
         title="Spaces in Ibadan" 
         subtitle="All listings are reviewed and verified by SpaceFinda before going live." 
         showListingLink
+        properties={apartments.map(toPropertyCard)}
       />
       <ExpansionGrid />
       <HowItWorks />
       <HostCTA />
       <Footer />
+      <Toaster position="bottom-right" />
     </main>
   );
 }

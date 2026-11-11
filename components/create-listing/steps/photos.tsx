@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { CircleAlert, ImageIcon, Loader, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { cloudinaryPublicId } from "@/lib/host/mappers";
 import StepHeading from "../step-heading";
 import { ListingPhoto, RECOMMENDED_PHOTOS, StepProps } from "../types";
 
@@ -27,6 +28,19 @@ const toPhotos = (files: FileList | null): ListingPhoto[] => {
   return valid;
 };
 
+// Uploads one photo through our /api/media proxy and returns its Cloudinary url and public id
+async function uploadPhoto(photo: ListingPhoto): Promise<ListingPhoto> {
+  const body = new FormData();
+  body.append("images", photo.file!);
+  const res = await fetch("/api/media", { method: "POST", body });
+  const json = await res.json().catch(() => null);
+  const url: string | undefined = json?.data?.uploadedImages?.[0]?.url;
+  const publicId = url && cloudinaryPublicId(url);
+  if (!res.ok || !url || !publicId) throw new Error(json?.message || "Upload failed");
+  URL.revokeObjectURL(photo.url);
+  return { id: photo.id, url, publicId };
+}
+
 export default function PhotosStep({ draft, update }: StepProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [queue, setQueue] = useState<ListingPhoto[]>([]);
@@ -34,29 +48,29 @@ export default function PhotosStep({ draft, update }: StepProps) {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const { photos } = draft;
 
-  // There's no upload API yet, so fake the progress one photo at a time before adding them to the draft
-  useEffect(() => {
-    if (!queue.length) return;
-    const timer = setTimeout(() => {
-      if (uploaded + 1 < queue.length) {
-        setUploaded(uploaded + 1);
-      } else {
-        update({ photos: [...photos, ...queue] });
-        setQueue([]);
-        setUploaded(0);
-      }
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [queue, uploaded, photos, update]);
-
-  const addFiles = (files: FileList | null) => {
+  // One at a time, so the counter shows real progress and a failed photo doesn't stop the rest
+  const addFiles = async (files: FileList | null) => {
     const added = toPhotos(files);
-    if (added.length) setQueue(added);
+    if (!added.length) return;
+    setQueue(added);
+    setUploaded(0);
+    const done: ListingPhoto[] = [];
+    for (const photo of added) {
+      try {
+        done.push(await uploadPhoto(photo));
+      } catch (err) {
+        URL.revokeObjectURL(photo.url);
+        toast.error(`${photo.file?.name ?? "A photo"} couldn't be uploaded. ${err instanceof Error ? err.message : ""}`.trim());
+      }
+      setUploaded((n) => n + 1);
+    }
+    update({ photos: [...photos, ...done] });
+    setQueue([]);
   };
 
   const removePhoto = (id: string) => {
     const photo = photos.find((p) => p.id === id);
-    if (photo) URL.revokeObjectURL(photo.url);
+    if (photo?.url.startsWith("blob:")) URL.revokeObjectURL(photo.url);
     update({ photos: photos.filter((p) => p.id !== id) });
   };
 

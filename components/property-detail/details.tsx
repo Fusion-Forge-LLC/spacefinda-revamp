@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import Wrapper from '../wrapper/wrapper'
 import { Location, Verify, Profile2User, InfoCircle, House, Clock, Sms,
     Wifi, 
@@ -30,15 +30,12 @@ import { Button } from '../ui/button';
 import { DialogMessage } from '../ui/modal/dialog-message';
 import { DrawerDialog } from '../ui/drawer/responsive-drawer';
 import ReviewCard from './review-card';
-import { amenities, protection, refundOPtion } from '@/content/site';
+import { protection, refundOPtion } from '@/content/site';
+import type { ApiApartment } from '@/lib/api/types';
+import { AMENITIES, formatTime } from '@/components/create-listing/types';
+import { amenityLabel, cancellationPolicy, placeName } from '@/lib/apartments/mappers';
 import { useIsMobile } from '@/hooks/use-media-query';
 
-const propertyDetails = {
-    guests: 2,
-    bedroom: 2,
-    bed: 2,
-    bathtub: 2,
-}
 
 const ICON_MAP: Record<string, React.ComponentType<any>> = {
   guests: Profile2User,
@@ -92,44 +89,7 @@ export const propertyAmenities: AmenityItem[] = [
   }
 ];
 
-const rules = {
-    checkIn: "12:00 PM",
-    checkOut: "1:00 AM",
-    maxGuest: 2,
-    smoking: false,
-    cancelation: "24 hrs"
-}
 
-const reviews = [
-    {
-        name: "Abdullahi Khadijah",
-        image: "/images/profile/425a32c0973170d750514947064f636e2aeef239.jpg",
-        date: "January 2026",
-        rating: 5,
-        note: "Really clean and comfortable space. Everything was exactly as described. The host was responsive and the whole booking process was smooth. Would definitely stay again."
-    },
-    {
-        name: "Adaeze Okonkwo",
-        image: "/images/profile/81b5fea648eba2a75d270f261bd259114c668e29.jpg",
-        date: "January 2026",
-        rating: 5,
-        note: "Excellent apartment. The generator came on immediately during power cuts which I really appreciated. Location is great and very secure. Highly recommend."
-    },
-    {
-        name: "Chisom Ike",
-        image: "/images/profile/ca043b1ef4cc927e1a5be6a5e0fabaf1b067fd6d.jpg",
-        date: "February 2026",
-        rating: 5,
-        note: "Nice space overall. WiFi was solid and the kitchen had everything I needed. The caution fee was refunded quickly after checkout which was reassuring. Good experience."
-    },
-    {
-        name: "Emeka Madu",
-        image: "/images/profile/ca043b1ef4cc927e1a5be6a5e0fabaf1b067fd6d.jpg",
-        date: "March 2026",
-        rating: 5,
-        note: "First time using SpaceFinda and I was impressed. The payment process was clear and I felt safe knowing my money was held until I actually checked in. The apartment itself was great."
-    },
-]
 
 const safetyInformation = [
 
@@ -172,12 +132,40 @@ const bookWithConfidence = [
     "A caution fee is collected and held separately. It is returned to you after checkout if no damage is reported."
 ]
 
-function Details() {
+const DESCRIPTION_PREVIEW = 320;
+
+function Details({ apartment }: { apartment: ApiApartment }) {
     const isMobile = useIsMobile();
+    const [showFullDescription, setShowFullDescription] = useState(false);
+
+    const propertyDetails = {
+        guests: apartment.maxGuests,
+        bedroom: apartment.bedrooms,
+        bed: apartment.beds,
+        bathtub: apartment.bathrooms,
+    };
+    const rules = apartment.houseRules ?? {};
+    const policy = cancellationPolicy(apartment.cancellationPolicy);
+    const place = placeName(apartment);
+    const description = apartment.description ?? '';
+    const longDescription = description.length > DESCRIPTION_PREVIEW;
+    const reviewCount = apartment.ratingCount ?? 0;
+    const rating = apartment.ratingAverage ?? 0;
+
+    const vendor = typeof apartment.vendor === 'object' ? apartment.vendor : undefined;
+    const hostName = [vendor?.user?.firstName, vendor?.user?.lastName].filter(Boolean).join(' ') || vendor?.user?.fullname || vendor?.businessName || 'your host';
+    const hostVerified = vendor?.verificationStatus === 'verified' || vendor?.verificationStatus === 'approved';
+
+    // The host's amenities, with an icon where we have one
+    const listedAmenities = (apartment.amenities ?? []).map((key) => ({
+        id: key,
+        label: amenityLabel(key),
+        icon: AMENITIES.find((a) => a.value === key)?.icon,
+    }));
 
     const entries = Object.entries(propertyDetails).filter(
-        ([_, value]) => value !== undefined && value !== null
-    );
+        ([, value]) => value !== undefined && value !== null
+    ) as [string, number][];
 
     return (
         <section className='col-span-7'>
@@ -190,7 +178,7 @@ function Details() {
 
                         <span className='flex items-center gap-1 md:gap-2 text-sm text-[#454545] px-3 py-1.5'>
                             <Location size="14" color="#9E8549"/>
-                            <span className='max-md:hidden'>123 Main Street,</span> Ibadan, Nigeria
+                            {place || 'Nigeria'}
                         </span>
                     </div>
 
@@ -219,42 +207,46 @@ function Details() {
                     </ul>
 
                 
-                    <Rating rating={4.5} totalReviews={1250} formatCompact />
+                    {reviewCount > 0 && <Rating rating={rating} totalReviews={reviewCount} formatCompact />}
                 </div>
 
                 <div className='flex flex-col-reverse md:flex-col'>
                     <article className='space-y-2 py-6 border-b max-md:px-4 border-b-[#E9E9E9]'>
                         <h3 className='font-semibold text-2xl tracking-[-3%] leading-[120%] font-inter text-Text-dark'>About this space</h3>
-                        <p className='text-Body-Text text-sm sm:text-base font-["Geist"]'>
-                            A comfortable and fully furnished 2-bedroom apartment in the heart of Bodija. Perfect for short stays, business trips or weekend getaways. The apartment is clean, secure and comes with all the essentials you need for a relaxed stay. The space is located in a quiet...
+                        <p className='text-Body-Text text-sm sm:text-base font-["Geist"] whitespace-pre-line'>
+                            {longDescription && !showFullDescription ? `${description.slice(0, DESCRIPTION_PREVIEW).trimEnd()}...` : description}
                         </p>
 
-                        <button className='font-["Geist"] text-Text-dark text-sm sm:text-base underline font-medium'>
-                            Show more
-                        </button>
+                        {longDescription && (
+                            <button
+                                type='button'
+                                onClick={() => setShowFullDescription((v) => !v)}
+                                className='font-["Geist"] text-Text-dark text-sm sm:text-base underline font-medium'
+                            >
+                                {showFullDescription ? 'Show less' : 'Show more'}
+                            </button>
+                        )}
                     </article>
 
                     <div className='flex flex-col md:flex-row max-md:px-4 max-md:gap-4 justify-between items-center py-6 border-b border-b-[#E9E9E9]'>
                         <div className='flex items-start md:items-center gap-4'>
-                            <div className="md:w-24 md:h-24 w-12 relative aspect-square rounded-full overflow-hidden shrink-0">
-                                <Image
-                                    src="/images/listings/taiwo-adeyemi.jpg"
-                                    alt="Host image"
-                                    fill
-                                    className="object-cover object-top"
-                                />
-                            </div>
+                            <Avatar className="md:size-24 size-12 shrink-0">
+                                {vendor?.user?.avatarUrl && <AvatarImage src={vendor.user.avatarUrl} alt={hostName} className="object-cover object-top" />}
+                                <AvatarFallback className="md:text-2xl">{hostName.charAt(0).toUpperCase()}</AvatarFallback>
+                            </Avatar>
                             <div className='space-y-2'>
                                 <h5 className='font-medium text-xl leading-[120%] font-inter text-Text-dark'>
-                                    Hosted by John Doe {" "}
-                                    <Badge className='bg-[#F7F7EF] text-[#9E8549]'>
-                                        <Verify color='#9E8549' size={14} />
-                                        Verified Host
-                                    </Badge>
+                                    Hosted by {hostName} {" "}
+                                    {hostVerified && (
+                                        <Badge className='bg-[#F7F7EF] text-[#9E8549]'>
+                                            <Verify color='#9E8549' size={14} />
+                                            Verified Host
+                                        </Badge>
+                                    )}
                                 </h5>
-                                <p className='text-Body-Text text-sm sm:text-base font-["Geist"]'>
-                                    Member since January 2026
-                                </p>
+                                {vendor?.bio && (
+                                    <p className='text-Body-Text text-sm sm:text-base font-["Geist"]'>{vendor.bio}</p>
+                                )}
                                 <p className='text-Body-Text text-sm sm:text-base font-["Geist"] flex items-center gap-1'>
                                     <Clock variant={"Linear"} color="#888888" size={16}/> <span>Typically responds within 2 hours</span>
                                 </p>
@@ -269,40 +261,31 @@ function Details() {
                     <h4 className='font-semibold text-lg md:text-2xl tracking-[-3%] leading-[120%] font-inter text-Text-dark'>
                         What you Enjoy
                     </h4>
+                    {listedAmenities.length === 0 && <p className="text-Body-Text">The host hasn&apos;t listed any amenities yet.</p>}
                     <ul className="grid grid-cols-2 gap-4 max-w-md font-['Geist'] text-Body-Text">
-                        {propertyAmenities.map(({ id, label, icon: IconComponent }) => (
+                        {listedAmenities.slice(0, 8).map(({ id, label, icon: IconComponent }) => (
                             <li key={id} className="flex items-center gap-2.5 text-gray-700">
-                                <IconComponent size={22} color='#616161' className=" shrink-0" variant="Linear" />
+                                {IconComponent ? <IconComponent size={22} color='#616161' className="shrink-0" strokeWidth={1.5} /> : <TickCircle size={22} color='#616161' className="shrink-0" />}
                                 <span className="leading-[150%]">{label}</span>
                             </li>
                         ))}
                     </ul>
-                    <DrawerDialog 
+                    {listedAmenities.length > 8 && <DrawerDialog 
                         triggerBtn={<button className='flex items-center justify-center max-md:h-12 max-md:w-full gap-2 bg-text-Grey-Muted hover:bg-[#D6E3FF] text-Body-Text text-sm sm:text-base font-["Geist"] font-medium px-4 py-2 rounded-lg'>
                             Show all amenities
                         </button>}
                         title='Amenities'
                         subtitle=""
                     >
-                        {amenities.map((category) => (
-                            <div key={category.category} className='border-b border-b-text-Grey-Muted text-Body-Text text-sm sm:text-base first:pt-0 last:pb-0 last:border-b-0 py-3'>
-                                <h3 className='text-[#454545] font-medium mb-4'>{category.category}</h3>
-
-                                <div className="grid grid-cols-12 gap-3">
-                                    {category.items.map((item) => {
-                                        const Icon = item.icon;
-
-                                        return (
-                                            <div key={item.name} className="flex items-center gap-2 sm:gap-3 odd:col-span-7 even:col-span-5">
-                                                <Icon className="h-5 w-5 shrink-0" color='#888888' />
-                                                <span className='text-nowrap'>{item.name}</span>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        ))}
-                    </DrawerDialog>
+                        <ul className="grid grid-cols-2 gap-3 text-Body-Text text-sm sm:text-base">
+                            {listedAmenities.map(({ id, label, icon: IconComponent }) => (
+                                <li key={id} className="flex items-center gap-2 sm:gap-3">
+                                    {IconComponent ? <IconComponent className="h-5 w-5 shrink-0" color='#888888' strokeWidth={1.5} /> : <TickCircle size={20} color='#888888' className="shrink-0" />}
+                                    <span>{label}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </DrawerDialog>}
                 </div>
 
                 <div className='py-6 space-y-5 border-y border-y-grey-200 px-4'>
@@ -313,28 +296,32 @@ function Details() {
                         <li className="text-gray-700 flex items-center gap-1">
                             <Clock size={isMobile ? 14 : 16} color='#616161' className=" shrink-0" variant="Linear" />
                             Check in:
-                            <span className="leading-[150%] text-Text-Dark">{rules.checkIn}</span>
+                            <span className="leading-[150%] text-Text-Dark">{rules.checkInTime ? formatTime(rules.checkInTime) : 'Ask the host'}</span>
                         </li>
                         <li className="text-gray-700 flex items-center gap-1">
                             <Clock size={isMobile ? 14 : 16} color='#616161' className=" shrink-0" variant="Linear" />
                                 Check Out:
-                            <span className="leading-[150%] text-Text-Dark">{rules.checkOut}</span>
+                            <span className="leading-[150%] text-Text-Dark">{rules.checkOutTime ? formatTime(rules.checkOutTime) : 'Ask the host'}</span>
                         </li>
                         <li className="text-gray-700 flex items-center gap-1">
                             <Profile2User size={isMobile ? 14 : 16} color='#616161' className=" shrink-0" variant="Linear" />
                                 Max guests:
-                            <span className="leading-[150%] text-Text-Dark">{rules.maxGuest}</span>
+                            <span className="leading-[150%] text-Text-Dark">{apartment.maxGuests ?? '—'}</span>
                         </li>
-                        {!rules.smoking && <li className="text-gray-700 flex items-center gap-1">
+                        {!rules.smokingAllowed && <li className="text-gray-700 flex items-center gap-1">
                             <Forbidden size={isMobile ? 14 : 16} color='#616161' className=" shrink-0" variant="Linear" />
                             No smoking indoors
                         </li>}
                         <li className="text-gray-700 flex items-center gap-1">
                             <CloseCircle size={isMobile ? 14 : 16} color='#616161' className=" shrink-0" variant="Linear" />
-                             Cancellation: Free before    
-                            <span className="leading-[150%] text-Text-Dark">{rules.cancelation}</span>
-                            of Check-in
+                            Cancellation: <span className="leading-[150%] text-Text-Dark">{policy.title}</span>
                         </li>
+                        {rules.additionalRules && (
+                            <li className="text-gray-700 flex items-start gap-1 whitespace-pre-line">
+                                <InfoCircle size={isMobile ? 14 : 16} color='#616161' className="shrink-0 mt-1" variant="Linear" />
+                                {rules.additionalRules}
+                            </li>
+                        )}
                     </ul>
                 </div>
 
@@ -358,10 +345,11 @@ function Details() {
                     </h4>
                     <div className='p-4 bg-text-Grey-Muted text-Body-Text rounded-md flex flex-col gap-2'>
                         <div className='flex items-center gap-2'>
-                            <Badge className='bg-primary-containers text-primary'>Flexible</Badge>
-                            <h4 className='font-medium text-xl'>Full refund available</h4>
+                            <Badge className={policy.badgeClassName}>{policy.title}</Badge>
+                            <h4 className='font-medium text-xl'>{policy.badge}</h4>
                         </div>
-                        <p className='text-Body-Text'>Cancel at least 24 hours before your check-in time and receive a full rent refund. Cancellations made less than 24 hours before check-in are not eligible for a refund. The caution fee and processing fee are handled separately and follow their own timelines.</p>
+                        <p className='text-Body-Text'>{policy.description}</p>
+                        <p className='text-Text-dark text-sm'>{policy.rule}</p>
                         <DrawerDialog 
                             triggerBtn={<Button variant={"ghost"} className='underline text-primary text-left items-start p-0 lg:text-lg '>
                                 Learn more about cancellation policies
@@ -402,9 +390,8 @@ function Details() {
                         <div className='px-3'>
                             <div className='flex items-center gap-1'>
                                 <Location size={14} color='#111' />
-                                <h5 className='font-medium text-sm text-[#454545] leading-[150%]'>Bodija, Ibadan, Oyo State</h5>
+                                <h5 className='font-medium text-sm text-[#454545] leading-[150%]'>{place || 'Location shared after booking'}</h5>
                             </div>
-                            <p className='text-sm text-Body-Text'>Bodija is one of Ibadan's well-established residential neighbourhoods, offering easy access to the University of Ibadan, Bodija Market, and major roads. The area is calm, accessible and well-serviced.</p>
                             <p className='text-Body-Text flex items-center gap-1 py-2.5 mt-2.5 border-t border-t-[#E9E9E9] text-[11px]'>
                                 <Lock size={11} color='#616161' />
                                 Exact address is shared after your booking is confirmed.
@@ -413,42 +400,19 @@ function Details() {
                     </div>
                 </div>
 
+                {/* Individual reviews need a reviews endpoint; until then show the summary */}
                 <div className='py-6 space-y-5 border-b border-b-grey-200 px-4 text-Body-Text'>
-                    <h4 className='flex items-center gap-2.5'>
-                        <span className='text-2xl text-Text-dark font-semibold tracking-[-3%] font-inter'>4.9</span>
-                        <div>
-                            <Rating rating={5} size={14} totalReviews={1250} formatCompact showNumber={false} showReviews={false}/>
-                            <span className=''>24 reviews</span>
-                        </div>
-                    </h4>
-
-                    <ul className='space-y-2 lg:grid lg:grid-cols-2 lg:gap-4'>
-                        {reviews.map((review, index) => {
-                            return <ReviewCard className='bg-text-Grey-Muted' {...review} key={index} />
-                        })}
-                    </ul>
-
-                    <DrawerDialog 
-                        triggerBtn={
-                            <Button className='w-full border-light-Grey text-Body-Text h-12 font-medium' variant={"outline"}>
-                                Show all 24 reviews 
-                            </Button>
-                        }
-                        title='Guest reviews'
-                        subtitle={
-                            <div className='flex gap-2'>
-                                <Rating rating={4.9} showReviews={false} showNumber={false} formatCompact size={12} />
-                                <span className='text-Text-Body'>4.9 out of 5 · 24 reviews</span>
+                    {reviewCount > 0 ? (
+                        <h4 className='flex items-center gap-2.5'>
+                            <span className='text-2xl text-Text-dark font-semibold tracking-[-3%] font-inter'>{rating.toFixed(1)}</span>
+                            <div>
+                                <Rating rating={rating} size={14} totalReviews={reviewCount} formatCompact showNumber={false} showReviews={false}/>
+                                <span>{reviewCount} {reviewCount === 1 ? 'review' : 'reviews'}</span>
                             </div>
-                        }
-                    >
-                        <ul className='space-y-2'>
-                            {[...reviews, ...reviews, ...reviews].map((review, index) => {
-                                return <ReviewCard {...review} key={index} />
-                            })}
-                        </ul>
-                    </DrawerDialog>
-                
+                        </h4>
+                    ) : (
+                        <p>No reviews yet. Be one of the first guests to stay here.</p>
+                    )}
                 </div>
 
                 <div className='py-6 space-y-5 border-b border-b-grey-200 px-4'>

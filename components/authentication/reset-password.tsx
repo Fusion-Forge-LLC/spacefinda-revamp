@@ -15,7 +15,9 @@ import { Button } from '../ui/button'
 import { AuthModal } from '@/@types/types'
 import PasswordInput from './password-input'
 import { PasswordChecklist } from './password-checklist'
-import { passwordSchema } from '@/lib/utils'
+import { applyServerErrors, passwordSchema } from '@/lib/utils'
+import { resetPassword } from '@/lib/auth/actions'
+import { toast } from 'sonner'
 
 
 
@@ -32,7 +34,9 @@ const forgetPasswordSchema = z
 function ResetPassword({
     isOpen, 
     setStep,
-    setIsModalOpen
+    setIsModalOpen,
+    flow,
+    setFlow,
 }: AuthModal) {
     const form = useForm<z.infer<typeof forgetPasswordSchema>>({
     resolver: zodResolver(forgetPasswordSchema),
@@ -44,9 +48,28 @@ function ResetPassword({
 
   const password = form.watch("newPassword") || "";
 
-  function onSubmit(data: z.infer<typeof forgetPasswordSchema>) {
-        setStep("success");
+  async function onSubmit({ newPassword }: z.infer<typeof forgetPasswordSchema>) {
+        const res = await resetPassword({ email: flow.email, otpCode: flow.otp, newPassword });
+        if (res.ok) {
+            setStep("success");
+            return;
+        }
+        if (res.status === 404) {
+            toast.error("We couldn't find an account with this email");
+            setStep("forgetPassword");
+            return;
+        }
+        // A bad or expired code sends them back to re-enter it; password problems stay on this form
+        if (res.status === 400 && !res.errors?.newPassword && /otp|code|expired/i.test(res.message)) {
+            toast.error("That code is invalid or has expired. Please try again.");
+            setFlow({ otp: "" });
+            setStep("verify-email");
+            return;
+        }
+        applyServerErrors(form.setError, ["newPassword"], res);
     }
+
+    const submitting = form.formState.isSubmitting;
 
     return (
         <ModalWrapper 
@@ -56,10 +79,10 @@ function ResetPassword({
             <div className='size-20 grid place-content-center rounded-full bg-primary mx-auto mb-4'>
                 <Padlock />
             </div>
-            <form action="" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
                 <div>
-                    <h3 className="text-Text-dark text-2xl font-bold" >Forgot Your Password?</h3>
-                    <p className="text-Text-body-text font-['Geist'] leading-6">Enter your email address and we'll send a reset link.</p>
+                    <h3 className="text-Text-dark text-2xl font-bold" >Set a new password</h3>
+                    <p className="text-Text-body-text font-['Geist'] leading-6">Choose a strong password you haven&apos;t used before.</p>
                 </div>
                 <FieldGroup>
                     <Controller
@@ -97,8 +120,8 @@ function ResetPassword({
                 </FieldGroup>
                 <Field>
                     <FieldContent>
-                        <Button size={"lg"} type="submit" className=" py-3 px-4 mt-3">
-                            Save new password
+                        <Button size={"lg"} type="submit" disabled={submitting} className=" py-3 px-4 mt-3">
+                            {submitting ? "Saving..." : "Save new password"}
                         </Button>
                     </FieldContent>
                 </Field>

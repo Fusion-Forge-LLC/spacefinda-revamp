@@ -4,12 +4,10 @@ import { CalendarDays, ReceiptText } from "lucide-react";
 import Wrapper from "@/components/wrapper/wrapper";
 import BackButton from "../back-button";
 import PaymentStatusBadge from "./payment-status-badge";
-import { DUMMY_PAYMENTS } from "@/lib/dummy";
+import type { Payment } from "@/lib/dummy";
 import { formatNaira } from "@/lib/utils";
 
-export default function Payments() {
-  const payments = DUMMY_PAYMENTS;
-
+export default function Payments({ payments }: { payments: Payment[] }) {
   return (
     <Wrapper className="py-6 md:py-8 max-md:px-4">
       <div className="flex flex-col md:flex-row gap-4 md:gap-24">

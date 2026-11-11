@@ -10,10 +10,9 @@ import {
 } from "@/components/ui/breadcrumb"
 import { ExportCurve, Heart } from 'iconsax-reactjs'
 import ShareDialog from '../ui/modal/dialog-share'
-import { sampleImages } from '@/content/site'
 import SaveDialog from '../ui/modal/save-dialog'
 
-function Header() {
+function Header({ title, city, image, id }: { title: string; city?: string; image: string; id: string }) {
     return (
         <Wrapper className='py-10 max-md:hidden'>
             <div>
@@ -24,17 +23,17 @@ function Header() {
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="#">Shortlet in Ibadan</BreadcrumbLink>
+                            <BreadcrumbLink href={city ? `/listings?city=${encodeURIComponent(city)}` : "/listings"}>{city ? `Shortlet in ${city}` : "Shortlets"}</BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbPage>Cozy 2BR Apartment</BreadcrumbPage>
+                            <BreadcrumbPage>{title}</BreadcrumbPage>
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
             </div>
             <div className='flex justify-between items-center mt-12'>
-                <h2 className='font-semibold tracking-[-3px] text-5xl text-Text-dark'>Cozy 2BR Apartment</h2>
+                <h2 className='font-semibold tracking-[-3px] text-5xl text-Text-dark'>{title}</h2>
                 <div className = "flex items-center gap-2">
                     <ShareDialog 
                         triggerBtn={
@@ -43,9 +42,9 @@ function Header() {
                                 Share
                             </button>
                         }
-                        imageSrc={sampleImages[0]} 
-                        title='Cozy 2BR Apartment in Ibadan' 
-                        slug='cozy-2br-apartment-in-ibadan' 
+                        imageSrc={image} 
+                        title={title} 
+                        slug={id} 
                     />
                     <SaveDialog
                         triggerBtn={
@@ -54,7 +53,7 @@ function Header() {
                                 Save
                             </button>
                         }
-                        slug='cozy-2br-apartment-in-ibadan' 
+                        slug={id} 
                     />
                 </div>
             </div>

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { getCurrentUser } from "@/lib/auth/session";
+import { AuthProvider } from "@/components/authentication/auth-provider";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -26,11 +28,13 @@ export const metadata: Metadata = {
   description: "Get workspace in Ibadan",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getCurrentUser();
+
   return (
     <html
       lang="en"
@@ -44,7 +48,9 @@ export default function RootLayout({
         "font-sans"
       )}
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>{children}</body>
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <AuthProvider initialUser={user}>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

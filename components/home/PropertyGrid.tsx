@@ -5,10 +5,10 @@ import Wrapper from "@/components/wrapper/wrapper";
 import PropertyCard from "./PropertyCard";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DUMMY_PROPERTIES } from "@/lib/dummy";
+import type { PropertyCardData } from "@/lib/apartments/mappers";
 import { cn } from "@/lib/utils";
 
-export default function PropertyGrid({title, subtitle, showListingLink, mb="mb-12"}: {title: string, subtitle: string, showListingLink?: boolean, mb?: string}) {
+export default function PropertyGrid({title, subtitle, showListingLink, mb="mb-12", properties}: {title: string, subtitle: string, showListingLink?: boolean, mb?: string, properties: PropertyCardData[]}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const handleScroll = (direction: "left" | "right") => {
@@ -49,13 +49,17 @@ export default function PropertyGrid({title, subtitle, showListingLink, mb="mb-1
           </div>
         </div>
 
-        <div className="overflow-x-scroll md:overflow-hidden" ref={containerRef}>
-          <ul className="flex w-full max-md:gap-4">
-            {[...DUMMY_PROPERTIES, ...DUMMY_PROPERTIES].map((prop, index) => (
-              <PropertyCard key={`${prop.id}-${index}`} {...prop} />
-            ))}
-          </ul>
-        </div>
+        {properties.length === 0 ? (
+          <p className="text-[#666666]">No spaces are live yet. Check back soon.</p>
+        ) : (
+          <div className="overflow-x-scroll md:overflow-hidden" ref={containerRef}>
+            <ul className="flex w-full max-md:gap-4">
+              {properties.map((prop) => (
+                <PropertyCard key={prop.id} {...prop} />
+              ))}
+            </ul>
+          </div>
+        )}
       </Wrapper>
     </section>
   );

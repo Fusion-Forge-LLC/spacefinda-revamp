@@ -1,14 +1,15 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { ImageIcon, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { DUMMY_HOST_LISTINGS } from "@/lib/dummy";
+import type { HostListing } from "@/lib/dummy";
+import { draftHref } from "@/lib/host/mappers";
 import { LISTING_STATUS } from "../listings/listing-status";
 import SectionCard from "../section-card";
 
-export default function MyListings() {
+export default function MyListings({ listings }: { listings: HostListing[] }) {
   return (
     <SectionCard
       title="My listings"
@@ -19,11 +20,17 @@ export default function MyListings() {
       }
     >
       <ul className="divide-y divide-gray-100">
-        {DUMMY_HOST_LISTINGS.map((listing) => {
+        {listings.map((listing) => {
           const status = LISTING_STATUS[listing.status];
           return (
             <li key={listing.id} className="flex items-center gap-3 py-3">
-              <Image src={listing.image} alt="" width={58} height={44} className="h-11 w-14.5 shrink-0 rounded-md object-cover" />
+              {listing.image ? (
+                <Image src={listing.image} alt="" width={58} height={44} className="h-11 w-14.5 shrink-0 rounded-md object-cover" />
+              ) : (
+                <div className="flex h-11 w-14.5 shrink-0 items-center justify-center rounded-md bg-text-Grey-Muted text-Text-body-text">
+                  <ImageIcon className="size-4" strokeWidth={1.25} />
+                </div>
+              )}
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm md:text-base text-Text-dark">{listing.title}</p>
                 <p className="mt-1 flex items-center gap-1 text-xs text-Text-body-text">
@@ -42,7 +49,7 @@ export default function MyListings() {
                 {status.label}
               </span>
               <Button asChild size="sm" className="h-8 rounded-md px-3">
-                <Link href={listing.status === "draft" ? "/host/create-listing" : `/host/listings/${listing.id}/edit`}>Continue</Link>
+                <Link href={listing.status === "draft" ? draftHref(listing.id) : `/host/listings/${listing.id}/edit`}>Continue</Link>
               </Button>
             </li>
           );

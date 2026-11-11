@@ -8,8 +8,12 @@ import RecentActivity from '@/components/host/overview/recent-activity'
 import StatCards from '@/components/host/overview/stat-cards'
 import UpcomingCheckins from '@/components/host/overview/upcoming-checkins'
 import StageSwitcher from '@/components/host/stage-switcher'
-import { DUMMY_HOST, DUMMY_HOST_BOOKINGS } from '@/lib/dummy'
+import type { HostStage } from '@/lib/dummy'
 import { getHostStage } from '@/lib/host-stage'
+import { getCurrentUser } from '@/lib/auth/session'
+import { getBookingStats, getEarnings, getHostBookings, getHostListings, getOccupancy, getRatingSummary } from '@/lib/host/api'
+import { draftHref, TOTAL_STEPS, toHostBooking, toHostListing } from '@/lib/host/mappers'
+import { getPayoutMethods } from '@/lib/payout/api'
 import { formatNaira } from '@/lib/utils'
 
 const TIME_ZONE = 'Africa/Lagos'
@@ -23,8 +27,33 @@ function getGreeting(now: Date) {
 }
 
 export default async function Page() {
-  const { stage, isVerified, hasBank, pendingDamageClaim: claim } = await getHostStage()
-  const { name } = DUMMY_HOST
+  const [user, apiListings, upcoming, earnings, bookingStats, occupancy, ratings, payoutMethods] = await Promise.all([
+    getCurrentUser(),
+    getHostListings(),
+    getHostBookings({ status: 'upcoming', limit: 5 }),
+    getEarnings(),
+    getBookingStats(),
+    getOccupancy(),
+    getRatingSummary(),
+    getPayoutMethods(),
+  ])
+  const listings = apiListings.map(toHostListing)
+  const upcomingBookings = upcoming.map((b) => toHostBooking(b))
+
+  // No listings yet → new; nothing live yet → setup; otherwise live
+  const realStage: HostStage = !listings.length ? 'new' : listings.some((l) => l.status === 'live' || l.status === 'paused') ? 'live' : 'setup'
+  const { stage, isVerified, pendingDamageClaim: claim } = await getHostStage(realStage)
+  const hasBank = payoutMethods.length > 0
+  const name = user?.firstName || user?.name?.split(' ')[0] || 'there'
+
+  // The most recently edited draft drives the "continue setup" prompts
+  const draft = listings.find((l) => l.status === 'draft')
+  const progress = draft && {
+    listingTitle: draft.title,
+    stepsComplete: Math.max((draft.draft?.step ?? 1) - 1, 0),
+    totalSteps: draft.draft?.totalSteps ?? TOTAL_STEPS,
+    href: draftHref(draft.id),
+  }
 
   if (stage === 'new' || stage === 'setup') {
     return (
@@ -34,10 +63,10 @@ export default async function Page() {
           title={`Welcome, ${name}`}
           description={stage === 'new' ? "Here's what's happening. Complete a few steps below to publish your first listing." : "Here's what's happening."}
         />
-        {stage === 'setup' && <ListingProgressBanner />}
-        <SetupTasks includeListing={stage === 'new'} isVerified={isVerified} hasBank={hasBank} />
+        {stage === 'setup' && progress && <ListingProgressBanner progress={progress} />}
+        <SetupTasks includeListing={stage === 'new' || !progress} isVerified={isVerified} hasBank={hasBank} progress={progress} />
         <div className='grid items-start gap-4 md:gap-6 lg:grid-cols-2'>
-          <UpcomingCheckins empty />
+          <UpcomingCheckins />
           <TipsCard />
         </div>
         <StageSwitcher active={stage} />
@@ -52,7 +81,7 @@ export default async function Page() {
     heading = { title: `${greeting}, ${name}`, description: `${date} · Here is everything happening across your listings today` }
   }
 
-  const nextBooking = DUMMY_HOST_BOOKINGS.find((b) => b.status === 'upcoming')
+  const nextBooking = upcomingBookings[0]
 
   return (
     <div className='flex flex-col gap-4 md:gap-6'>
@@ -77,12 +106,12 @@ export default async function Page() {
         />
       )}
 
-      <StatCards />
+      <StatCards earnings={earnings} bookings={bookingStats} occupancy={occupancy} ratings={ratings} />
       <div className='grid items-start gap-4 md:gap-6 lg:grid-cols-2'>
-        <UpcomingCheckins />
+        <UpcomingCheckins bookings={upcomingBookings} />
         <RecentActivity />
       </div>
-      <MyListings />
+      <MyListings listings={listings} />
       <StageSwitcher active={stage} />
     </div>
   )

@@ -1,12 +1,14 @@
 import { notFound } from 'next/navigation'
 import BookingDetail from '@/components/host/bookings/booking-detail'
-import { DUMMY_HOST_BOOKINGS } from '@/lib/dummy'
+import { getHostBooking } from '@/lib/host/api'
+import { toHostBooking } from '@/lib/host/mappers'
 
+// The [ref] segment holds the booking's API id
 export default async function Page({ params }: { params: Promise<{ ref: string }> }) {
-  const { ref } = await params
-  const booking = DUMMY_HOST_BOOKINGS.find((b) => b.ref === ref)
+  const { ref: id } = await params
+  const booking = await getHostBooking(id)
 
   if (!booking) notFound()
 
-  return <BookingDetail booking={booking} />
+  return <BookingDetail booking={toHostBooking(booking)} />
 }

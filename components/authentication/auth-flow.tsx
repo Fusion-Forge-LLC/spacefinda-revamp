@@ -1,70 +1,54 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useState } from 'react'
 import SignIn from './sign-in'
 import ForgetPassword from './forget-password'
-import { authflow } from '@/@types/types';
+import { AuthFlowData, authflow, AuthModal } from '@/@types/types';
 import CheckEmail from './check-email';
 import VerifyEmail from './verify-email';
 import ResetPassword from './reset-password';
 import SuccessMessage from './success';
 import SignUp from './sign-up';
 
-function AuthFlow({showModal, setShowModal}: {showModal: boolean; setShowModal: (showModal: boolean) => void}) {
-    const [step, setStep] = React.useState<authflow>("signIn");
+const INITIAL_FLOW: AuthFlowData = { email: "", otp: "", purpose: "signup" };
 
-    useEffect(() => {
-        if (!showModal) {
-            setStep("signIn");
-        }
-    }, [showModal]);
+const STEPS: Partial<Record<authflow, React.ComponentType<AuthModal>>> = {
+    signIn: SignIn,
+    forgetPassword: ForgetPassword,
+    checkEmail: CheckEmail,
+    "verify-email": VerifyEmail,
+    resetPassword: ResetPassword,
+    success: SuccessMessage,
+    "sign-up": SignUp,
+};
+
+interface AuthFlowProps {
+    showModal: boolean;
+    setShowModal: (showModal: boolean) => void;
+    initialStep?: authflow;
+}
+
+// Only mounted while the modal is open, so step and flow data start fresh on every open
+function AuthFlowSteps({setShowModal, initialStep = "signIn"}: Omit<AuthFlowProps, "showModal">) {
+    const [step, setStep] = useState<authflow>(initialStep);
+    const [flow, setFlowState] = useState<AuthFlowData>(INITIAL_FLOW);
+
+    const setFlow = useCallback((patch: Partial<AuthFlowData>) => setFlowState((prev) => ({ ...prev, ...patch })), []);
+
+    const Step = STEPS[step];
+    if (!Step) return null;
 
     return (
-        <>
-            {showModal && 
-                <>
-                    {step === "signIn" ? (
-                        <SignIn 
-                            isOpen={showModal && step === "signIn"} 
-                            setStep={setStep}
-                            setIsModalOpen={setShowModal}
-                        /> ): step === "forgetPassword" ? (
-                            <ForgetPassword 
-                                isOpen={showModal && step === "forgetPassword"} 
-                                setStep={setStep}
-                                setIsModalOpen={setShowModal}
-                            /> ): step === "checkEmail" ? (
-                            <CheckEmail 
-                                isOpen={showModal && step === "checkEmail"} 
-                                setStep={setStep}
-                                setIsModalOpen={setShowModal}
-                            /> ) : step === "verify-email" ? (
-                                <VerifyEmail 
-                                    isOpen={showModal && step === "verify-email"} 
-                                    setStep={setStep}
-                                    setIsModalOpen={setShowModal}
-                                />) : step === "resetPassword" ? (
-                                    <ResetPassword
-                                        isOpen={showModal && step === "resetPassword"}
-                                        setStep={setStep}
-                                        setIsModalOpen={setShowModal}
-                                    />
-                                ) : step === "success" ? ( 
-                                    <SuccessMessage 
-                                        isOpen={showModal && step === "success"}
-                                        setStep={setStep}
-                                        setIsModalOpen={setShowModal}
-                                    />
-                                ): step === "sign-up" ? (
-                                    <SignUp 
-                                        isOpen={showModal && step === "sign-up"}
-                                        setStep={setStep}
-                                        setIsModalOpen={setShowModal}
-                                    />
-                                ) : null
-                        }
-                </>
-            }
-        </>
+        <Step
+            isOpen
+            setStep={setStep}
+            setIsModalOpen={setShowModal}
+            flow={flow}
+            setFlow={setFlow}
+        />
     )
+}
+
+function AuthFlow({showModal, ...props}: AuthFlowProps) {
+    return showModal ? <AuthFlowSteps {...props} /> : null;
 }
 
 export default AuthFlow

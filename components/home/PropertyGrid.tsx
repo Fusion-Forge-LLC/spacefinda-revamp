@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Wrapper from "@/components/wrapper/wrapper";
 import PropertyCard from "./PropertyCard";
 import Link from "next/link";
@@ -10,20 +10,41 @@ import { cn } from "@/lib/utils";
 
 export default function PropertyGrid({title, subtitle, showListingLink, mb="mb-12", properties}: {title: string, subtitle: string, showListingLink?: boolean, mb?: string, properties: PropertyCardData[]}) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollState = useCallback(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 1);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    const observer = new ResizeObserver(updateScrollState);
+    observer.observe(el);
+    return () => {
+      el.removeEventListener("scroll", updateScrollState);
+      observer.disconnect();
+    };
+  }, [updateScrollState, properties.length]);
+
   const handleScroll = (direction: "left" | "right") => {
-    if (containerRef.current) {
-      const containerWidth = containerRef.current.clientWidth;
-      const childWidth = containerRef.current.children[0].children[0].clientWidth;
-      const scrollValue = containerWidth / Math.floor(containerWidth / childWidth);
-        containerRef.current.scrollBy({
-            left: direction === "left" ? -scrollValue : scrollValue,
-            behavior: "smooth",
-        });
-      setScrollPosition(containerRef.current.scrollLeft + (direction === "left" ? -scrollValue : scrollValue));
-    }
-  }
-  
+    const el = containerRef.current;
+    const firstCard = el?.querySelector("li");
+    if (!el || !firstCard) return;
+    const perView = Math.max(1, Math.floor(el.clientWidth / firstCard.clientWidth));
+    const scrollValue = el.clientWidth / perView;
+    el.scrollBy({
+      left: direction === "left" ? -scrollValue : scrollValue,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <section className="py-10 sm:py-24 bg-white max-md:px-4">
       <Wrapper>
@@ -35,10 +56,10 @@ export default function PropertyGrid({title, subtitle, showListingLink, mb="mb-1
           
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <button className="btn-rounded" onClick={() => handleScroll("left")} disabled={scrollPosition <= 1}>
+              <button className="btn-rounded" onClick={() => handleScroll("left")} disabled={!canScrollLeft} aria-label="Scroll left">
                 <ChevronLeft size={24} />
               </button>
-              <button className="btn-rounded" onClick={() => handleScroll("right")} disabled={containerRef.current ? scrollPosition + containerRef.current.clientWidth >= containerRef.current.scrollWidth : false}>
+              <button className="btn-rounded" onClick={() => handleScroll("right")} disabled={!canScrollRight} aria-label="Scroll right">
                 <ChevronRight size={24} />
               </button>
             </div>

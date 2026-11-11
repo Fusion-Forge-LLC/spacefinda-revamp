@@ -42,7 +42,7 @@ function ModalWrapper({
               {title}
               <button onClick={() => setIsOpen(false)} className="ml-auto cursor-pointer hover:scale-105 transition-all"><Close /></button>
             </DialogTitle>
-          <DialogDescription className="pt-5 px-6 border-t border-t-text-Grey-Muted">{children}</DialogDescription>
+          <DialogDescription asChild className="pt-5 px-6 border-t border-t-text-Grey-Muted"><div>{children}</div></DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>
